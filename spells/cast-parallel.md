@@ -1,6 +1,16 @@
-# Parallel Execution Guide
+# /cast:parallel Spell
 
-Familiar들을 병렬로 실행하여 워크플로우 성능을 최적화하는 전략입니다.
+Familiar들을 병렬로 실행하여 워크플로우 성능을 최적화하는 마법입니다.
+
+---
+
+## Usage
+
+```
+/cast:parallel "복잡한 기능 구현"
+/cast:parallel --tasks="FE,BE,Test"
+/cast:parallel --max=4
+```
 
 ---
 
@@ -83,35 +93,6 @@ Parallel Execution (Fast)
 | **Soft** | 권장 순차, 병렬 가능 | Codex FE, Codex BE |
 | **None** | 완전 독립 | 서로 다른 모듈 |
 
-### 2.3 Dependency Detection
-
-```json
-{
-  "tasks": [
-    {
-      "id": "T1",
-      "familiar": "stitch",
-      "outputs": ["components/Button.tsx"],
-      "dependencies": []
-    },
-    {
-      "id": "T2",
-      "familiar": "codex",
-      "outputs": ["pages/Login.tsx"],
-      "dependencies": ["T1"],  // Hard: needs Button
-      "reason": "imports Button component"
-    },
-    {
-      "id": "T3",
-      "familiar": "codex",
-      "outputs": ["api/auth.ts"],
-      "dependencies": [],  // Independent
-      "parallel_with": ["T1", "T2"]
-    }
-  ]
-}
-```
-
 ---
 
 ## 3. Execution Patterns
@@ -134,20 +115,6 @@ Parallel Execution (Fast)
              ▼
          Archmage
          (Merge)
-```
-
-**Implementation**:
-
-```json
-{
-  "execution": "parallel",
-  "tasks": [
-    { "id": "A", "familiar": "codex", "file": "utils/format.ts" },
-    { "id": "B", "familiar": "codex", "file": "utils/validate.ts" },
-    { "id": "C", "familiar": "codex", "file": "utils/transform.ts" }
-  ],
-  "merge_strategy": "collect_all"
-}
 ```
 
 ### 3.2 Pattern B: Staged Parallel
@@ -191,92 +158,7 @@ Stage 3 (Analysis + Review)
         Complete
 ```
 
-**Implementation**:
-
-```json
-{
-  "execution": "staged_parallel",
-  "stages": [
-    {
-      "stage": 1,
-      "parallel": true,
-      "tasks": [
-        { "id": "UI", "familiar": "stitch" },
-        { "id": "BE", "familiar": "codex" }
-      ]
-    },
-    {
-      "stage": 2,
-      "parallel": false,
-      "tasks": [
-        { "id": "FE", "familiar": "codex", "depends": ["UI"] }
-      ]
-    },
-    {
-      "stage": 3,
-      "parallel": true,
-      "tasks": [
-        { "id": "Analysis", "familiar": "gemini", "depends": ["FE", "BE"] },
-        { "id": "Review", "familiar": "reviewer", "depends": ["FE", "BE"] }
-      ]
-    }
-  ]
-}
-```
-
-### 3.3 Pattern C: Pipeline
-
-연속적인 처리가 필요한 경우
-
-```
-    Input
-      │
-      ▼
-┌───────────┐
-│  Gemini   │ Analyze
-└─────┬─────┘
-      │ findings
-      ▼
-┌───────────┐
-│   Codex   │ Fix
-└─────┬─────┘
-      │ fixed code
-      ▼
-┌───────────┐
-│ Reviewer  │ Verify
-└─────┬─────┘
-      │
-      ▼
-   Output
-```
-
-**Implementation**:
-
-```json
-{
-  "execution": "pipeline",
-  "steps": [
-    {
-      "familiar": "gemini",
-      "action": "analyze",
-      "output_key": "findings"
-    },
-    {
-      "familiar": "codex",
-      "action": "fix",
-      "input_from": "findings",
-      "output_key": "fixed_code"
-    },
-    {
-      "familiar": "reviewer",
-      "action": "verify",
-      "input_from": "fixed_code"
-    }
-  ]
-}
-```
-
-### 3.4 Pattern D: Fan-Out/Fan-In
+### 3.3 Pattern C: Fan-Out/Fan-In
 
 하나의 작업을 분할하여 병렬 처리 후 병합
 
@@ -300,28 +182,6 @@ Stage 3 (Analysis + Review)
       ┌──────────────┐
       │    Merge     │
       └──────────────┘
-```
-
-**Implementation**:
-
-```json
-{
-  "execution": "fan_out_fan_in",
-  "split": {
-    "strategy": "by_module",
-    "input": "src/",
-    "partitions": ["auth/", "user/", "payment/"]
-  },
-  "parallel_tasks": {
-    "familiar": "codex",
-    "action": "refactor",
-    "per_partition": true
-  },
-  "merge": {
-    "strategy": "collect_changes",
-    "conflict_resolution": "manual"
-  }
-}
 ```
 
 ---
@@ -355,28 +215,6 @@ Stage 3 (Analysis + Review)
 | **Serialize** | High conflict risk | Safe | Slower |
 | **Merge** | Low conflict, additive changes | Fast | Risk |
 | **Consolidate** | Same file, different parts | Balanced | Complex |
-
-### 4.3 Merge Implementation
-
-```json
-{
-  "merge_strategy": {
-    "type": "smart_merge",
-
-    "rules": {
-      "same_function": "serialize",
-      "different_functions": "merge",
-      "imports": "union",
-      "types": "union"
-    },
-
-    "conflict_handling": {
-      "auto_resolvable": "apply",
-      "manual_required": "pause_and_notify"
-    }
-  }
-}
-```
 
 ---
 
@@ -413,35 +251,6 @@ concurrency:
   resource_based:
     max_total_tokens_per_minute: 100000
     max_api_calls_per_minute: 30
-```
-
-### 5.2 Queue Management
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      TASK QUEUE                              │
-│                                                              │
-│  Priority Queue                                              │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │ [P1: Critical Fix] [P2: Feature] [P3: Refactor] ... │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                         │                                    │
-│                         ▼                                    │
-│  ┌─────────────────────────────────────────────────────┐    │
-│  │              SCHEDULER                               │    │
-│  │  - Check concurrency limits                         │    │
-│  │  - Check dependencies                               │    │
-│  │  - Allocate to available slots                      │    │
-│  └─────────────────────────────────────────────────────┘    │
-│                         │                                    │
-│          ┌──────────────┼──────────────┐                    │
-│          ▼              ▼              ▼                    │
-│     ┌─────────┐    ┌─────────┐    ┌─────────┐              │
-│     │ Slot 1  │    │ Slot 2  │    │ Slot 3  │              │
-│     │ Codex   │    │ Gemini  │    │ Codex   │              │
-│     └─────────┘    └─────────┘    └─────────┘              │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -488,81 +297,59 @@ Isolated      Has Dependents
                 └─────────────┘
 ```
 
-### 6.3 Rollback Implementation
-
-```json
-{
-  "error_handling": {
-    "on_failure": {
-      "strategy": "isolate_and_retry",
-      "max_retries": 2,
-      "retry_delay": 5000
-    },
-
-    "on_cascade_failure": {
-      "strategy": "rollback_chain",
-      "preserve_successful": true
-    },
-
-    "rollback": {
-      "enabled": true,
-      "checkpoint_before_parallel": true,
-      "restore_on_failure": true
-    }
-  }
-}
-```
-
 ---
 
-## 7. Monitoring & Observability
+## 7. Examples
 
-### 7.1 Parallel Execution Metrics
-
-```yaml
-metrics:
-  parallelism:
-    - active_tasks
-    - queue_depth
-    - slot_utilization
-    - avg_wait_time
-
-  performance:
-    - parallel_speedup_ratio
-    - task_completion_time
-    - merge_time
-
-  reliability:
-    - failure_rate
-    - retry_count
-    - rollback_count
-```
-
-### 7.2 Execution Timeline
+### Example 1: Simple Parallel
 
 ```
-Timeline View:
-────────────────────────────────────────────────────────────►
-│                        Time (seconds)                      │
-│  0    10    20    30    40    50    60    70    80        │
-│  │     │     │     │     │     │     │     │     │        │
-│  ├─────────────────┤                                       │
-│  │   Codex (FE)    │                                       │
-│  │                 │                                       │
-│  ├────────────────────────┤                                │
-│  │     Codex (BE)         │                                │
-│  │                        │                                │
-│  │           ├────────────────────┤                        │
-│  │           │     Gemini         │                        │
-│  │           │                    │                        │
-│  │           │              ├───────────┤                  │
-│  │           │              │ Reviewer  │                  │
-│  │           │              │           │                  │
-│  └───────────┴──────────────┴───────────┘                  │
-│                                          │                  │
-│  Total: 70s (Sequential would be: 100s)  │                  │
-│  Speedup: 30%                            │                  │
-────────────────────────────────────────────────────────────►
+> /cast:parallel --tasks="utils/format,utils/validate,utils/transform"
+
+🔮 Analyzing dependencies...
+✓ No conflicts detected
+✓ All tasks independent
+
+Executing in parallel:
+├── [1/3] Codex: utils/format.ts
+├── [2/3] Codex: utils/validate.ts
+└── [3/3] Codex: utils/transform.ts
+
+Progress: ████████████████████ 100%
+
+All tasks complete!
+- Total time: 35s
+- Sequential time: 90s
+- Speedup: 61%
+```
+
+### Example 2: Staged Execution
+
+```
+> /cast:parallel "Fullstack feature: User Dashboard"
+
+🔮 Analyzing task...
+
+Execution Plan:
+Stage 1 (Parallel):
+  ├── Stitch: Dashboard UI components
+  └── Codex: Backend API endpoints
+
+Stage 2 (Sequential):
+  └── Codex: Frontend integration (needs UI)
+
+Stage 3 (Parallel):
+  ├── Gemini: Security analysis
+  └── Reviewer: Code review
+
+Execute? [Y/n]
+> Y
+
+Stage 1: ██████████ Complete (45s)
+Stage 2: ██████████ Complete (30s)
+Stage 3: ██████████ Complete (25s)
+
+Total: 100s (Sequential estimate: 160s, 38% faster)
 ```
 
 ---
@@ -571,8 +358,9 @@ Timeline View:
 
 ### 8.1 Parallel Execution Config
 
+`runes/config/parallel.yaml`:
+
 ```yaml
-# runes/config/parallel.yaml
 parallel_execution:
   enabled: true
 
@@ -627,14 +415,15 @@ parallel_execution:
 3. **Resource awareness**: API 제한 고려
 4. **Checkpoint often**: 병렬 실행 전 체크포인트
 
-### 9.3 Common Pitfalls
+---
 
-| Pitfall | Solution |
-|---------|----------|
-| 과도한 병렬화 | 적절한 concurrency 제한 |
-| 파일 충돌 무시 | 충돌 검사 활성화 |
-| 에러 전파 | 격리된 에러 처리 |
-| 리소스 고갈 | 레이트 리밋 설정 |
+## 10. Related Spells
+
+| Spell | Description |
+|-------|-------------|
+| `/cast:dev` | 기본 개발 워크플로우 |
+| `/cast:analyze` | 분석 (병렬 가능) |
+| `/cast:review` | 리뷰 |
 
 ---
 

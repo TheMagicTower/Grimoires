@@ -46,9 +46,10 @@ rules:
   - defensive-programming
 
 spells:
-  - basic-workflow
-  - auto-review
-  - error-resolution
+  - cast-dev
+  - cast-review
+  - cast-analyze
+  - cast-fix
 
 context:
   focus_areas:

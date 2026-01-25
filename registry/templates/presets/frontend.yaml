@@ -32,8 +32,9 @@ rules:
   - accessibility
 
 spells:
-  - basic-workflow
-  - auto-review
+  - cast-dev
+  - cast-review
+  - cast-design
 
 context:
   focus_areas:

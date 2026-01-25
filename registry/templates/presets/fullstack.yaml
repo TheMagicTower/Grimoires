@@ -41,11 +41,12 @@ rules:
   - error-handling
 
 spells:
-  - basic-workflow
-  - auto-review
-  - dev-workflow
-  - error-resolution
-  - parallel-execution
+  - cast-dev
+  - cast-review
+  - cast-analyze
+  - cast-design
+  - cast-fix
+  - cast-parallel
 
 context:
   focus_areas:

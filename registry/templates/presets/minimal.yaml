@@ -13,7 +13,7 @@ rules:
   - dry
 
 spells:
-  - basic-workflow
+  - cast-dev
 
 context:
   focus_areas:

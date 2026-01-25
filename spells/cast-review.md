@@ -1,6 +1,17 @@
-# Auto-Review Loop Spell
+# /cast:review Spell
 
-코드 변경 시 자동으로 리뷰하고 필요한 경우 수정까지 진행하는 자동화 워크플로우입니다.
+코드 변경 시 자동으로 리뷰하고 필요한 경우 수정까지 진행하는 자동화 마법입니다.
+
+---
+
+## Usage
+
+```
+/cast:review              # 현재 변경사항 리뷰
+/cast:review --file=path  # 특정 파일 리뷰
+/cast:review --pr=123     # 특정 PR 리뷰
+/cast:review --auto-fix   # 자동 수정 활성화
+```
 
 ---
 
@@ -65,9 +76,9 @@ Auto-Review Loop는 코드 품질을 자동으로 보장하는 피드백 루프�
 ### 2.2 Manual Triggers
 
 ```
-/review              # 현재 변경사항 리뷰
-/review --file=path  # 특정 파일 리뷰
-/review --pr=123     # 특정 PR 리뷰
+/cast:review              # 현재 변경사항 리뷰
+/cast:review --file=path  # 특정 파일 리뷰
+/cast:review --pr=123     # 특정 PR 리뷰
 ```
 
 ---
@@ -266,85 +277,15 @@ auto_review:
     notify_human: true
 ```
 
-### 5.2 Exclusion Rules
-
-```yaml
-exclusions:
-  files:
-    - "**/*.generated.ts"
-    - "**/node_modules/**"
-    - "**/dist/**"
-    - "**/*.d.ts"
-
-  rules:
-    # 테스트 파일은 일부 규칙 완화
-    "**/*.test.ts":
-      - disable: complexity
-      - disable: file_length
-
-    # 마이그레이션은 리뷰 제외
-    "migrations/**":
-      - skip_review: true
-```
-
 ---
 
-## 6. Review Loop States
+## 6. Related Spells
 
-### 6.1 State Machine
-
-```
-┌─────────┐
-│  IDLE   │◄─────────────────────────┐
-└────┬────┘                          │
-     │ trigger                       │
-     ▼                               │
-┌─────────┐                          │
-│PRE_CHECK│                          │
-└────┬────┘                          │
-     │ pass                          │
-     ▼                               │
-┌─────────┐      fail                │
-│REVIEWING│──────────────────────────┤
-└────┬────┘                          │
-     │ complete                      │
-     ▼                               │
-┌─────────┐      no issues           │
-│DECIDING │──────────────────────────┤
-└────┬────┘                          │
-     │ issues found                  │
-     ▼                               │
-┌─────────┐                          │
-│ FIXING  │                          │
-└────┬────┘                          │
-     │ fixed                         │
-     ▼                               │
-┌─────────┐      pass                │
-│VERIFYING│──────────────────────────┘
-└────┬────┘
-     │ fail (retry < max)
-     └──────────► FIXING
-     │ fail (retry >= max)
-     ▼
-┌─────────┐
-│ESCALATED│
-└─────────┘
-```
-
-### 6.2 State Transitions
-
-| From | To | Condition |
-|------|-----|-----------|
-| IDLE | PRE_CHECK | Trigger received |
-| PRE_CHECK | REVIEWING | All pre-checks pass |
-| PRE_CHECK | IDLE | Pre-check fail (blocked) |
-| REVIEWING | DECIDING | Review complete |
-| DECIDING | IDLE | No issues or all Low |
-| DECIDING | FIXING | High/Critical issues |
-| FIXING | VERIFYING | Fix applied |
-| VERIFYING | IDLE | Verification pass |
-| VERIFYING | FIXING | Verification fail (retry) |
-| VERIFYING | ESCALATED | Max retries reached |
+| Spell | Description |
+|-------|-------------|
+| `/cast:dev` | 개발 워크플로우 |
+| `/cast:analyze` | Gemini 심층 분석 |
+| `/cast:fix` | 에러 해결 |
 
 ---
 
@@ -399,141 +340,6 @@ exclusions:
 
 **Status**: Ready for merge
 ```
-
-### 7.3 Escalation Notification
-
-```markdown
-## ⚠️ Review Escalation Required
-
-**File**: `src/services/auth.ts`
-**Reason**: Auto-fix failed after 3 attempts
-
-### Failed Issue
-**Type**: Critical - SQL Injection vulnerability
-**Location**: Line 78
-
-### Attempted Fixes
-1. Parameterized query - Failed (syntax error)
-2. ORM method - Failed (type mismatch)
-3. Prepared statement - Failed (test failure)
-
-### Required Action
-Human review and manual fix required.
-
-**Assigned to**: @developer
-**Priority**: Critical
-```
-
----
-
-## 8. Metrics & Reporting
-
-### 8.1 Tracked Metrics
-
-| Metric | Description |
-|--------|-------------|
-| Review Count | 총 리뷰 실행 횟수 |
-| Pass Rate | 첫 리뷰 통과율 |
-| Auto-Fix Success | 자동 수정 성공률 |
-| Avg Fix Time | 평균 수정 소요 시간 |
-| Escalation Rate | Human 에스컬레이션 비율 |
-| Issue Distribution | Severity별 이슈 분포 |
-
-### 8.2 Weekly Report
-
-```markdown
-## 📊 Auto-Review Weekly Report
-
-**Period**: 2026-01-19 ~ 2026-01-25
-
-### Overview
-- Total Reviews: 156
-- Pass Rate: 73%
-- Auto-Fix Success: 89%
-- Escalations: 2
-
-### Issue Trends
-| Principle | This Week | Last Week | Trend |
-|-----------|-----------|-----------|-------|
-| SRP | 12 | 18 | ↓ 33% |
-| DRY | 8 | 5 | ↑ 60% |
-| Error Handling | 15 | 12 | ↑ 25% |
-
-### Top Files by Issues
-1. `src/services/user.ts` - 8 issues
-2. `src/utils/validation.ts` - 5 issues
-3. `src/controllers/api.ts` - 4 issues
-
-### Recommendations
-- DRY 위반 증가 추세, 공통 유틸리티 추출 고려
-- user.ts 리팩토링 권장
-```
-
----
-
-## 9. Integration with CI/CD
-
-### 9.1 GitHub Actions Integration
-
-```yaml
-# .github/workflows/auto-review.yml
-name: Auto-Review
-
-on:
-  pull_request:
-    types: [opened, synchronize]
-
-jobs:
-  auto-review:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Run Grimoires Auto-Review
-        uses: grimoires/auto-review-action@v1
-        with:
-          config: runes/config/auto-review.yaml
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Post Review Comments
-        if: failure()
-        uses: grimoires/post-review-comments@v1
-```
-
-### 9.2 Git Hooks Integration
-
-```bash
-# .git/hooks/pre-commit
-#!/bin/bash
-grimoires review --staged --fail-on=high
-```
-
----
-
-## 10. Best Practices
-
-### 10.1 Configuration Tips
-
-- 초기에는 `auto_fix: false`로 시작하여 리뷰만 수행
-- 점진적으로 자동 수정 범위 확대
-- 핵심 비즈니스 로직은 `excluded_patterns`에 추가 고려
-
-### 10.2 Handling False Positives
-
-```yaml
-# 특정 라인 리뷰 제외
-// grimoires-ignore-next-line: complexity
-function complexButNecessary() { ... }
-
-# 특정 파일 리뷰 제외
-// grimoires-ignore-file
-```
-
-### 10.3 Continuous Improvement
-
-- 주간 리포트 분석으로 반복 이슈 식별
-- 반복 이슈는 rules에 추가
-- 팀 컨벤션에 맞게 threshold 조정
 
 ---
 
