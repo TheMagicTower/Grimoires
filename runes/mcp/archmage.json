@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Archmage MCP Configuration - Central Orchestrator",
+  "mcpServers": {
+    "serena": {
+      "command": "npx",
+      "args": ["-y", "serena-mcp"],
+      "env": {},
+      "description": "Memory management and project indexing"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {},
+      "description": "Complex problem decomposition and reasoning"
+    },
+    "fixhive": {
+      "command": "fixhive-mcp",
+      "args": [],
+      "env": {},
+      "description": "Error case search and registration"
+    }
+  }
+}

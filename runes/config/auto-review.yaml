@@ -1,0 +1,103 @@
+# Grimoires Auto-Review Configuration
+# Version: 0.1.0
+
+auto_review:
+  enabled: true
+
+  # Trigger conditions
+  triggers:
+    on_save: false        # Review on file save
+    on_commit: true       # Review before/after commit
+    on_pr: true           # Review on PR creation/update
+
+  # Pre-checks before review
+  pre_checks:
+    lint: true
+    typecheck: true
+    test: true
+    coverage_threshold: 80
+
+  # Review focus areas
+  review:
+    focus:
+      - solid_principles
+      - error_handling
+      - security
+      - naming
+      - complexity
+
+    # Quality thresholds
+    thresholds:
+      cyclomatic_complexity: 10
+      cognitive_complexity: 15
+      file_length: 300
+      function_length: 50
+      parameters_count: 5
+      nesting_depth: 4
+
+  # Auto-fix settings
+  auto_fix:
+    enabled: true
+    max_retries: 3
+
+    # Actions by severity
+    severity_actions:
+      critical: auto_fix_and_block
+      high: auto_fix
+      medium: notify
+      low: log
+
+    # Patterns excluded from auto-fix
+    excluded_patterns:
+      - "*.test.ts"
+      - "*.spec.ts"
+      - "migrations/*"
+      - "*.generated.ts"
+
+  # Notification settings
+  notifications:
+    slack: false
+    email: false
+    inline_comments: true
+    summary_report: true
+
+  # Escalation policy
+  escalation:
+    after_retries: 3
+    notify_human: true
+    create_issue: true
+
+# File exclusions
+exclusions:
+  files:
+    - "**/*.generated.ts"
+    - "**/node_modules/**"
+    - "**/dist/**"
+    - "**/build/**"
+    - "**/*.d.ts"
+    - "**/*.min.js"
+
+  # Rule overrides by pattern
+  rules:
+    "**/*.test.ts":
+      disable:
+        - complexity
+        - file_length
+
+    "**/*.spec.ts":
+      disable:
+        - complexity
+        - file_length
+
+    "migrations/**":
+      skip_review: true
+
+    "scripts/**":
+      disable:
+        - solid_principles
+
+# Reporting settings
+reporting:
+  weekly_report: true
+  metrics_tracking: true
+  trend_analysis: true

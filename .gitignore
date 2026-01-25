@@ -6,9 +6,11 @@ node_modules/
 .env.local
 .env.*.local
 
-# API Keys
+# API Keys & Credentials
 *.key
+*.pem
 credentials.json
+credentials*.json
 
 # IDE
 .idea/
@@ -28,8 +30,12 @@ logs/
 dist/
 build/
 
-# Serena memories (local only)
+# Grimoires runtime
+.grimoires/
+
+# Serena
 .serena/memories/*.local.md
+.serena/index/
 
 # Temporary
 tmp/

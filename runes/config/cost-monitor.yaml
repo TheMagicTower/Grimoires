@@ -1,0 +1,158 @@
+# Grimoires Cost Monitoring Configuration
+# Version: 0.1.0
+
+cost_monitoring:
+  enabled: true
+
+  # API 가격 정보 (per 1K tokens)
+  pricing:
+    claude:
+      input: 0.015    # $15 per 1M tokens
+      output: 0.075   # $75 per 1M tokens
+
+    openai:  # Codex
+      input: 0.03
+      output: 0.06
+
+    gemini:
+      input: 0.00125  # $1.25 per 1M tokens
+      output: 0.005   # $5 per 1M tokens
+
+  # 예산 설정
+  budgets:
+    daily:
+      limit: 10.00      # $10/day
+      warning: 7.00     # 70% warning
+      critical: 9.00    # 90% critical
+
+    weekly:
+      limit: 50.00
+      warning: 35.00
+      critical: 45.00
+
+    monthly:
+      limit: 150.00
+      warning: 100.00
+      critical: 135.00
+
+    per_session:
+      limit: 5.00
+      warning: 3.50
+      critical: 4.50
+
+  # Familiar별 예산 할당
+  allocation:
+    archmage:
+      percentage: 40
+      daily_limit: 4.00
+
+    codex:
+      percentage: 30
+      daily_limit: 3.00
+
+    gemini:
+      percentage: 20
+      daily_limit: 2.00
+
+    stitch:
+      percentage: 7
+      daily_limit: 0.70
+
+    reviewer:
+      percentage: 3
+      daily_limit: 0.30
+
+  # 비용 최적화 규칙
+  optimization:
+    # 간단한 작업은 저렴한 모델 사용
+    model_routing:
+      simple_tasks:
+        threshold: complexity < 3
+        prefer: haiku  # 저렴한 모델
+
+      complex_tasks:
+        threshold: complexity >= 7
+        prefer: opus   # 고성능 모델
+
+    # 캐싱으로 비용 절감
+    caching:
+      enabled: true
+      cache_hit_savings: true
+
+    # 불필요한 호출 방지
+    deduplication:
+      enabled: true
+      window: 300  # 5분 내 동일 요청 차단
+
+  # 알림 설정
+  alerts:
+    channels:
+      console: true
+      slack: false
+      email: false
+
+    triggers:
+      budget_warning:
+        threshold: 70%
+        message: "Budget warning: {percentage}% used"
+
+      budget_critical:
+        threshold: 90%
+        message: "Budget critical: {percentage}% used"
+        action: throttle
+
+      budget_exceeded:
+        threshold: 100%
+        message: "Budget exceeded!"
+        action: pause
+
+      unusual_spike:
+        threshold: 200%  # 평균 대비
+        message: "Unusual cost spike detected"
+
+  # 리포팅
+  reporting:
+    # 실시간 대시보드
+    realtime:
+      enabled: true
+      update_interval: 60  # seconds
+
+    # 일일 리포트
+    daily_report:
+      enabled: true
+      send_time: "23:59"
+      include:
+        - total_cost
+        - breakdown_by_familiar
+        - top_expensive_operations
+        - optimization_suggestions
+
+    # 주간 리포트
+    weekly_report:
+      enabled: true
+      send_day: sunday
+      include:
+        - cost_trend
+        - budget_utilization
+        - efficiency_metrics
+        - recommendations
+
+  # 비용 절감 모드
+  cost_saving_mode:
+    # 자동 활성화 조건
+    auto_enable:
+      when_budget_above: 80%
+
+    # 절감 조치
+    actions:
+      - reduce_analysis_depth
+      - increase_cache_ttl
+      - batch_small_requests
+      - prefer_cheaper_models
+
+  # 로깅
+  logging:
+    level: info
+    include_token_counts: true
+    include_cost_per_request: true
+    log_file: .grimoires/logs/cost.log

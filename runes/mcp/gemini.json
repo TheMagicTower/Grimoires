@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Gemini Familiar MCP Configuration - Code Analysis Specialist",
+  "mcpServers": {
+    "gemini": {
+      "command": "npx",
+      "args": ["-y", "gemini-mcp"],
+      "env": {
+        "GOOGLE_API_KEY": "${GOOGLE_API_KEY}",
+        "GEMINI_MODEL": "gemini-1.5-pro",
+        "GEMINI_MAX_OUTPUT_TOKENS": "8192"
+      },
+      "description": "Google Gemini for large-scale code analysis with 1M+ token context"
+    }
+  }
+}
