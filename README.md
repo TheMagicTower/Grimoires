@@ -268,6 +268,71 @@ grimoires config      # Edit global configuration
 grimoires help        # Show help
 ```
 
+### Example: `grimoires doctor` Output
+
+```
+Checking Grimoires installation...
+
+✓ Installation directory: /home/user/.grimoires
+✓ Version: 0.2.0
+✓ core/ exists (18 files)
+✓ templates/ exists (5 files)
+✓ mcp/ exists (4 files)
+✓ Global configuration exists
+✓ Claude Code CLI available
+✓ Node.js v20.10.0
+✓ PATH is configured
+
+Health check passed - installation is healthy
+```
+
+---
+
+## Troubleshooting
+
+### `grimoires: command not found`
+
+터미널을 재시작하거나 다음을 실행:
+```bash
+# bash
+source ~/.bashrc
+
+# zsh
+source ~/.zshrc
+```
+
+### PATH가 설정되지 않음
+
+수동으로 PATH 추가:
+```bash
+export GRIMOIRES_HOME="$HOME/.grimoires"
+export PATH="$GRIMOIRES_HOME/bin:$PATH"
+```
+
+### 설치 실패 (Node.js 버전)
+
+Node.js 18+ 필요:
+```bash
+node -v  # v18.0.0 이상이어야 함
+```
+
+### API 키 설정
+
+환경변수로 설정 (권장):
+```bash
+# ~/.bashrc 또는 ~/.zshrc에 추가
+export OPENAI_API_KEY="sk-..."
+export GOOGLE_API_KEY="AI..."
+```
+
+### 설치 복구
+
+문제 발생 시 재설치:
+```bash
+grimoires uninstall
+curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+```
+
 ---
 
 ## Design Principles (16)
@@ -334,6 +399,17 @@ git checkout -b feature/your-feature
 
 # Make changes and test
 # Submit PR
+```
+
+### File Synchronization Note
+
+이 프로젝트는 두 가지 디렉토리 구조를 유지합니다:
+- **원본** (`tower/`, `familiars/`, `spells/`, `runes/`) - 개발용
+- **배포용** (`core/`, `templates/`, `mcp/`) - 글로벌 설치용
+
+코어 파일 수정 시 `scripts/release.sh`를 실행하여 배포용 디렉토리와 동기화하세요:
+```bash
+./scripts/release.sh
 ```
 
 ---

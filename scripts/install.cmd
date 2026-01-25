@@ -33,15 +33,24 @@ if %ERRORLEVEL% neq 0 (
     exit /b 1
 )
 
-for /f "tokens=1 delims=v" %%i in ('node -v') do set NODE_VER=%%i
-for /f "tokens=1 delims=." %%i in ('node -v') do set NODE_MAJOR=%%i
-set NODE_MAJOR=%NODE_MAJOR:v=%
-
-if %NODE_MAJOR% LSS 18 (
-    echo [ERROR] Node.js 18+ required
+:: Get Node.js version more robustly
+for /f "tokens=*" %%i in ('node -v 2^>nul') do set NODE_VER=%%i
+if not defined NODE_VER (
+    echo [ERROR] Could not determine Node.js version
     exit /b 1
 )
-echo [OK] Node.js found
+
+:: Extract major version number (handles v18.x.x, v20.x.x, etc.)
+set NODE_VER_CLEAN=%NODE_VER:v=%
+for /f "tokens=1 delims=." %%i in ("%NODE_VER_CLEAN%") do set NODE_MAJOR=%%i
+
+:: Validate NODE_MAJOR is a number
+set /a NODE_MAJOR_NUM=%NODE_MAJOR% 2>nul
+if %NODE_MAJOR_NUM% LSS 18 (
+    echo [ERROR] Node.js 18+ required ^(found: %NODE_VER%^)
+    exit /b 1
+)
+echo [OK] Node.js %NODE_VER% found
 
 :: Check npm
 where npm >nul 2>nul

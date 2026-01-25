@@ -95,22 +95,30 @@ download_grimoires() {
     local downloaded=false
 
     if command -v curl &> /dev/null; then
+        info "Attempting to download release package..."
         if curl -fsSL "$RELEASE_URL/grimoires-core.tar.gz" -o "/tmp/grimoires-core.tar.gz" 2>/dev/null; then
             tar -xzf "/tmp/grimoires-core.tar.gz" -C "$INSTALL_DIR"
             rm -f "/tmp/grimoires-core.tar.gz"
             downloaded=true
+            success "Downloaded release package"
+        else
+            info "Release package not available (this is normal for development versions)"
         fi
     elif command -v wget &> /dev/null; then
+        info "Attempting to download release package..."
         if wget -qO "/tmp/grimoires-core.tar.gz" "$RELEASE_URL/grimoires-core.tar.gz" 2>/dev/null; then
             tar -xzf "/tmp/grimoires-core.tar.gz" -C "$INSTALL_DIR"
             rm -f "/tmp/grimoires-core.tar.gz"
             downloaded=true
+            success "Downloaded release package"
+        else
+            info "Release package not available (this is normal for development versions)"
         fi
     fi
 
     # Fallback to git clone
     if [ "$downloaded" = false ]; then
-        info "Release not found, cloning from repository..."
+        info "Falling back to git clone from repository..."
         if command -v git &> /dev/null; then
             git clone --depth 1 "$REPO_URL.git" "$INSTALL_DIR/repo" 2>/dev/null || {
                 error "Failed to clone repository"

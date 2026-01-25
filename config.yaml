@@ -9,20 +9,31 @@ version: "0.2.0"
 # =============================================================================
 # API Keys
 # =============================================================================
-# Set via environment variables (recommended) or directly here.
-# Environment variables take precedence over values in this file.
+# SECURITY WARNING: Never commit actual API keys to version control!
+# Always use environment variables for sensitive credentials.
+#
+# Recommended: Set keys via environment variables (values below are references)
+# The ${VAR_NAME} syntax references environment variables, NOT actual keys.
+#
+# Example .bashrc or .zshrc:
+#   export OPENAI_API_KEY="sk-..."
+#   export GOOGLE_API_KEY="AI..."
+#   export FIGMA_ACCESS_TOKEN="figd_..."
 
 api_keys:
   # OpenAI API Key (for Codex Familiar)
   # Get from: https://platform.openai.com/api-keys
+  # DO NOT paste actual key here - use environment variable
   openai: ${OPENAI_API_KEY}
 
   # Google AI API Key (for Gemini Familiar)
   # Get from: https://makersuite.google.com/app/apikey
+  # DO NOT paste actual key here - use environment variable
   google: ${GOOGLE_API_KEY}
 
   # Figma Access Token (for Stitch Familiar)
   # Get from: https://www.figma.com/developers/api#access-tokens
+  # DO NOT paste actual key here - use environment variable
   figma: ${FIGMA_ACCESS_TOKEN}
 
 # =============================================================================

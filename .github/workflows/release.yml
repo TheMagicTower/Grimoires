@@ -106,7 +106,9 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
-          source ~/.bashrc || source ~/.zshrc || true
+          # Set PATH directly instead of sourcing rc files (more reliable in CI)
+          export GRIMOIRES_HOME="$HOME/.grimoires"
+          export PATH="$GRIMOIRES_HOME/bin:$PATH"
           grimoires version
           grimoires doctor
 
@@ -115,6 +117,8 @@ jobs:
         shell: pwsh
         run: |
           irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex
-          refreshenv
+          # Set PATH directly for current session
+          $env:GRIMOIRES_HOME = "$env:USERPROFILE\.grimoires"
+          $env:Path = "$env:GRIMOIRES_HOME\bin;$env:Path"
           grimoires version
           grimoires doctor

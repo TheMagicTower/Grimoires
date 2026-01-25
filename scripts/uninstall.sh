@@ -57,10 +57,15 @@ for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile" "$HOME/.bash_profile";
             # Create backup
             cp "$rc" "${rc}.grimoires.bak"
 
-            # Remove Grimoires-related lines
-            # Using a temporary file to avoid issues with in-place editing
-            grep -v "GRIMOIRES_HOME" "$rc" | grep -v "# Grimoires" > "${rc}.tmp" || true
-            mv "${rc}.tmp" "$rc"
+            # Remove Grimoires-related lines safely
+            # Using grep -E to combine patterns, with fallback to copy if no matches
+            if grep -v -E "(GRIMOIRES_HOME|# Grimoires)" "$rc" > "${rc}.tmp" 2>/dev/null; then
+                mv "${rc}.tmp" "$rc"
+            else
+                # If grep returns empty or fails, copy original minus the lines manually
+                sed -e '/GRIMOIRES_HOME/d' -e '/# Grimoires/d' "$rc" > "${rc}.tmp" 2>/dev/null || cp "${rc}.grimoires.bak" "${rc}.tmp"
+                mv "${rc}.tmp" "$rc"
+            fi
 
             # Remove backup if successful
             rm -f "${rc}.grimoires.bak"
