@@ -1,0 +1,36 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# API Keys
+*.key
+credentials.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Build
+dist/
+build/
+
+# Serena memories (local only)
+.serena/memories/*.local.md
+
+# Temporary
+tmp/
+temp/
