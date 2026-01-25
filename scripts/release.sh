@@ -129,7 +129,7 @@ echo -e "${BLUE}Total files: $TOTAL_FILES${NC}"
 echo ""
 echo -e "${BLUE}Creating tarball (grimoires-core.tar.gz)...${NC}"
 cd "$STAGING_DIR"
-tar -czvf "$DIST_DIR/grimoires-core.tar.gz" . --exclude='.DS_Store' --exclude='*.bak'
+tar --exclude='.DS_Store' --exclude='*.bak' -czvf "$DIST_DIR/grimoires-core.tar.gz" .
 TARBALL_SIZE=$(du -h "$DIST_DIR/grimoires-core.tar.gz" | cut -f1)
 echo -e "${GREEN}✓ Created grimoires-core.tar.gz ($TARBALL_SIZE)${NC}"
 
