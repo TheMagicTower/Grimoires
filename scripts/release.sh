@@ -11,7 +11,9 @@ PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 DIST_DIR="$PROJECT_ROOT/dist"
 
 # Colors
+RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 NC='\033[0m'
@@ -155,6 +157,105 @@ echo -e "${BLUE}Creating checksums...${NC}"
 cd "$DIST_DIR"
 sha256sum grimoires-core.tar.gz grimoires-core.zip > checksums.sha256
 echo -e "${GREEN}✓ Created checksums.sha256${NC}"
+
+# ============================================================
+# Package Verification Tests
+# ============================================================
+echo ""
+echo -e "${BLUE}Running package verification tests...${NC}"
+
+VERIFY_DIR=$(mktemp -d)
+trap "rm -rf $VERIFY_DIR $STAGING_DIR" EXIT
+
+verify_errors=0
+
+# Test 1: Verify tarball can be extracted
+echo -n "  Testing tarball extraction... "
+if tar -xzf "$DIST_DIR/grimoires-core.tar.gz" -C "$VERIFY_DIR" 2>/dev/null; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+# Test 2: Verify required directories exist
+echo -n "  Checking core/ directory... "
+if [ -d "$VERIFY_DIR/core" ] && [ "$(ls -A "$VERIFY_DIR/core" 2>/dev/null)" ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+echo -n "  Checking templates/ directory... "
+if [ -d "$VERIFY_DIR/templates" ] && [ "$(ls -A "$VERIFY_DIR/templates" 2>/dev/null)" ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+echo -n "  Checking mcp/ directory... "
+if [ -d "$VERIFY_DIR/mcp" ] && [ "$(ls -A "$VERIFY_DIR/mcp" 2>/dev/null)" ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+# Test 3: Verify config.yaml exists
+echo -n "  Checking config.yaml... "
+if [ -f "$VERIFY_DIR/config.yaml" ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+# Test 4: Verify version file
+echo -n "  Checking version file... "
+if [ -f "$VERIFY_DIR/version" ] && [ "$(cat "$VERIFY_DIR/version")" = "$VERSION" ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+# Test 5: Verify zip file integrity
+echo -n "  Testing zip file integrity... "
+if unzip -t "$DIST_DIR/grimoires-core.zip" > /dev/null 2>&1; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+# Test 6: Verify checksums file format
+echo -n "  Checking checksums format... "
+if [ -f "$DIST_DIR/checksums.sha256" ] && [ "$(wc -l < "$DIST_DIR/checksums.sha256")" -eq 2 ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+# Test 7: Verify install scripts exist in dist
+echo -n "  Checking install scripts... "
+if [ -f "$DIST_DIR/install.sh" ] && [ -f "$DIST_DIR/install.ps1" ] && [ -f "$DIST_DIR/install.cmd" ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${RED}FAILED${NC}"
+    ((verify_errors++))
+fi
+
+# Verification summary
+echo ""
+if [ $verify_errors -eq 0 ]; then
+    echo -e "${GREEN}✓ All verification tests passed${NC}"
+else
+    echo -e "${RED}✗ $verify_errors verification test(s) failed${NC}"
+    exit 1
+fi
 
 # Summary
 echo ""

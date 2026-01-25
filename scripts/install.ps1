@@ -90,19 +90,22 @@ function Install-Grimoires {
     $zipPath = "$env:TEMP\grimoires-core.zip"
     $downloaded = $false
 
+    Write-Info "Attempting to download release package..."
     try {
         $ProgressPreference = 'SilentlyContinue'
-        Invoke-WebRequest -Uri "$ReleaseUrl/grimoires-core.zip" -OutFile $zipPath -UseBasicParsing
+        Invoke-WebRequest -Uri "$ReleaseUrl/grimoires-core.zip" -OutFile $zipPath -UseBasicParsing -ErrorAction Stop
         Expand-Archive -Path $zipPath -DestinationPath $InstallDir -Force
         Remove-Item $zipPath -ErrorAction SilentlyContinue
         $downloaded = $true
+        Write-Success "Downloaded release package"
     }
     catch {
-        Write-Info "Release not found, cloning from repository..."
+        Write-Info "Release package not available (this is normal for development versions)"
     }
 
     # Fallback to git clone
     if (-not $downloaded) {
+        Write-Info "Falling back to git clone from repository..."
         try {
             git clone --depth 1 "$RepoUrl.git" "$InstallDir\repo"
 
