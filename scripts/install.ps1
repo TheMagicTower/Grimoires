@@ -53,7 +53,7 @@ function Test-Prerequisites {
         exit 1
     }
 
-    # Claude Code
+    # Claude Code (optional in CI/non-interactive mode)
     try {
         $null = Get-Command claude -ErrorAction Stop
         Write-Success "Claude Code CLI"
@@ -61,14 +61,22 @@ function Test-Prerequisites {
     catch {
         Write-Warn "Claude Code CLI not found"
         Write-Host "  Install: npm install -g @anthropic-ai/claude-code"
-        $install = Read-Host "Install Claude Code now? [Y/n]"
-        if ($install -ne 'n') {
-            npm install -g @anthropic-ai/claude-code
-            Write-Success "Claude Code CLI installed"
+
+        # Check if running in CI or non-interactive mode
+        $isCI = $env:CI -or $env:GITHUB_ACTIONS -or (-not [Environment]::UserInteractive)
+        if ($isCI) {
+            Write-Info "Non-interactive mode: skipping Claude Code installation"
+            Write-Info "Install manually later: npm install -g @anthropic-ai/claude-code"
         }
         else {
-            Write-Err "Claude Code is required. Exiting."
-            exit 1
+            $install = Read-Host "Install Claude Code now? [Y/n]"
+            if ($install -ne 'n') {
+                npm install -g @anthropic-ai/claude-code
+                Write-Success "Claude Code CLI installed"
+            }
+            else {
+                Write-Warn "Claude Code not installed. Install later to use Grimoires."
+            }
         }
     }
 }

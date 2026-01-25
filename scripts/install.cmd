@@ -60,22 +60,32 @@ if %ERRORLEVEL% neq 0 (
 )
 echo [OK] npm found
 
-:: Check Claude Code
+:: Check Claude Code (optional in CI/non-interactive mode)
 where claude >nul 2>nul
 if %ERRORLEVEL% neq 0 (
     echo [WARN] Claude Code CLI not found
     echo   Install: npm install -g @anthropic-ai/claude-code
-    set /p INSTALL_CLAUDE="Install Claude Code now? [Y/n]: "
-    if /i "!INSTALL_CLAUDE!" neq "n" (
-        npm install -g @anthropic-ai/claude-code
-        if %ERRORLEVEL% neq 0 (
-            echo [ERROR] Failed to install Claude Code
-            exit /b 1
-        )
-        echo [OK] Claude Code CLI installed
+
+    :: Check if running in CI
+    if defined CI (
+        echo [INFO] Non-interactive mode: skipping Claude Code installation
+        echo [INFO] Install manually later: npm install -g @anthropic-ai/claude-code
+    ) else if defined GITHUB_ACTIONS (
+        echo [INFO] Non-interactive mode: skipping Claude Code installation
+        echo [INFO] Install manually later: npm install -g @anthropic-ai/claude-code
     ) else (
-        echo Claude Code is required. Exiting.
-        exit /b 1
+        set /p INSTALL_CLAUDE="Install Claude Code now? [Y/n]: "
+        if /i "!INSTALL_CLAUDE!" neq "n" (
+            npm install -g @anthropic-ai/claude-code
+            if %ERRORLEVEL% neq 0 (
+                echo [WARN] Failed to install Claude Code
+                echo [INFO] Install manually later: npm install -g @anthropic-ai/claude-code
+            ) else (
+                echo [OK] Claude Code CLI installed
+            )
+        ) else (
+            echo [WARN] Claude Code not installed. Install later to use Grimoires.
+        )
     )
 ) else (
     echo [OK] Claude Code CLI found

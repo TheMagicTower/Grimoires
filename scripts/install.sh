@@ -59,19 +59,25 @@ check_prerequisites() {
     fi
     success "npm $(npm -v)"
 
-    # Claude Code CLI
+    # Claude Code CLI (optional in CI/non-interactive mode)
     if ! command -v claude &> /dev/null; then
         warning "Claude Code CLI not found"
         echo "  Install: npm install -g @anthropic-ai/claude-code"
-        echo ""
-        read -p "Install Claude Code now? [Y/n] " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
-            npm install -g @anthropic-ai/claude-code
-            success "Claude Code CLI installed"
+
+        # Check if running in CI or non-interactive mode
+        if [ -n "$CI" ] || [ -n "$GITHUB_ACTIONS" ] || [ ! -t 0 ]; then
+            info "Non-interactive mode: skipping Claude Code installation"
+            info "Install manually later: npm install -g @anthropic-ai/claude-code"
         else
-            error "Claude Code is required. Exiting."
-            exit 1
+            echo ""
+            read -p "Install Claude Code now? [Y/n] " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+                npm install -g @anthropic-ai/claude-code
+                success "Claude Code CLI installed"
+            else
+                warning "Claude Code not installed. Install later to use Grimoires."
+            fi
         fi
     else
         success "Claude Code CLI"
