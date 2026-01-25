@@ -7,6 +7,118 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-01-25
+
+### Installation & Deployment Release
+
+This release introduces a comprehensive cross-platform installation system with one-liner install commands and a two-tier (Global + Project-local) deployment architecture.
+
+### Added
+
+#### Cross-Platform Installation
+- **One-liner installers** for all major platforms:
+  - `install.sh` - Unix/Linux/macOS (bash)
+  - `install.ps1` - Windows PowerShell
+  - `install.cmd` - Windows CMD
+- **Clean uninstallers**:
+  - `uninstall.sh` - Unix/Linux/macOS
+  - `uninstall.ps1` - Windows PowerShell
+- **Shell wrapper CLI** (`grimoires`) with commands:
+  - `version` - Show installed version
+  - `doctor` - Check installation health
+  - `update` - Update to latest version
+  - `uninstall` - Remove Grimoires
+  - `config` - Edit global configuration
+
+#### Two-Tier Architecture
+- **Global installation** (`~/.grimoires/`):
+  - `core/` - Tower, Familiars, Spells, Rules
+  - `templates/` - Project templates and presets
+  - `mcp/` - MCP server configurations
+  - `config.yaml` - Global settings
+  - `bin/` - CLI wrapper
+- **Project-local** structure:
+  - `grimoire.yaml` - Project configuration
+  - `.grimoires/` - Custom extensions
+  - `.serena/` - Memory storage
+  - `.claude/settings.local.json` - MCP settings
+
+#### Auto-Initialization
+- Automatic initialization prompt when running `/cast:*` commands without `grimoire.yaml`
+- User confirmation before initializing (never auto-creates without consent)
+- Configurable via `defaults.auto_init` in global config
+
+#### Release Automation
+- `release.sh` - Packaging script for releases
+- GitHub Actions workflow for automated releases
+- Cross-platform installation testing in CI
+
+#### Global Configuration
+- Comprehensive `config.yaml` with:
+  - API key management
+  - Default settings for new projects
+  - Cost management controls
+  - Update preferences
+  - Advanced settings
+
+### Changed
+
+#### Directory Structure
+- Reorganized to support global installation:
+  - `tower/` → `core/tower/`
+  - `familiars/` → `core/familiars/`
+  - `spells/` → `core/spells/`
+  - `runes/rules/` → `core/rules/`
+  - `runes/mcp/` → `mcp/`
+  - `registry/templates/` → `templates/`
+
+#### Spells
+- Updated `/cast:summon` to support auto-init flow
+- Added auto-init flow diagram to spell documentation
+
+### Project Structure After Installation
+
+```
+~/.grimoires/                    # Global (shared across projects)
+├── bin/grimoires                # CLI wrapper
+├── core/
+│   ├── tower/                   # Archmage config (5 files)
+│   ├── familiars/               # Agent definitions (4 files)
+│   ├── spells/                  # Workflows (8 files)
+│   └── rules/                   # Design principles (1 file)
+├── templates/
+│   ├── grimoire.yaml.template
+│   └── presets/                 # minimal, frontend, backend, fullstack
+├── mcp/                         # MCP configurations (4 files)
+├── config.yaml                  # Global configuration
+└── version                      # Installed version
+
+project/                         # Project-local
+├── grimoire.yaml                # Project settings
+├── .grimoires/                  # Custom extensions
+├── .serena/                     # Memory storage
+└── .claude/settings.local.json  # MCP settings
+```
+
+### Installation
+
+**Unix/Linux/macOS:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+```
+
+**Windows PowerShell:**
+```powershell
+irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex
+```
+
+**Windows CMD:**
+```batch
+curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+---
+
 ## [0.1.0] - 2026-01-25
 
 ### Initial Release
@@ -45,11 +157,13 @@ First public release of Grimoires - Multi-AI Agent Orchestration for Claude Code
   - Severity-based issue classification
 
 #### Workflows (Spells)
-- `basic-workflow`: Codex-Gemini collaboration pattern
-- `auto-review`: Automatic review loop with auto-fix
-- `dev-workflow`: Full 8-stage development workflow
-- `error-resolution`: FixHive-based error handling
-- `parallel-execution`: Parallel task execution strategies
+- `/cast:summon`: Project initialization
+- `/cast:dev`: Development workflow
+- `/cast:review`: Code review
+- `/cast:analyze`: Code analysis
+- `/cast:design`: UI/UX design
+- `/cast:fix`: Error resolution
+- `/cast:parallel`: Parallel execution
 
 #### Design Principles
 - 16 software design principles with verification rules
@@ -96,22 +210,6 @@ First public release of Grimoires - Multi-AI Agent Orchestration for Claude Code
 - Session prompts (PROMPTS.md)
 - Installation script
 
-### Project Structure
-
-```
-Grimoires/
-├── tower/           (5 files)  - Archmage configuration
-├── familiars/       (4 files)  - Familiar definitions
-├── spells/          (5 files)  - Workflows
-├── runes/
-│   ├── mcp/         (4 files)  - MCP configurations
-│   ├── rules/       (1 file)   - Design principles
-│   └── config/      (2 files)  - System configuration
-├── docs/            (3 files)  - Documentation
-├── scripts/         (1 file)   - Utility scripts
-└── .serena/         (4 files)  - Memory storage
-```
-
 ### Dependencies
 
 - Claude Code CLI
@@ -123,7 +221,7 @@ Grimoires/
 
 ## [Unreleased]
 
-### Planned for 0.2.0
+### Planned for 0.3.0
 - [ ] Testing suite for workflows
 - [ ] Plugin system for custom Familiars
 - [ ] Web dashboard for monitoring
@@ -142,7 +240,8 @@ Grimoires/
 
 | Version | Date | Highlights |
 |---------|------|------------|
-| 0.1.0 | 2026-01-25 | Initial release with 4 Familiars, 5 workflows, 16 design principles |
+| 0.2.0 | 2026-01-25 | Cross-platform installation, global deployment, auto-init |
+| 0.1.0 | 2026-01-25 | Initial release with 4 Familiars, 7 spells, 16 design principles |
 
 ---
 

@@ -2,7 +2,7 @@
 
 > Multi-AI Agent Orchestration Plugin Package for Claude Code
 
-A Magic Tower Project | Version 0.1.0
+A Magic Tower Project | Version 0.2.0
 
 ---
 
@@ -30,6 +30,104 @@ Grimoires는 Claude Code를 중심으로 여러 AI 에이전트(Codex, Gemini, S
 
 ---
 
+## Installation
+
+### One-liner Install
+
+**Unix/Linux/macOS:**
+```bash
+curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+```
+
+**Windows PowerShell:**
+```powershell
+irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex
+```
+
+**Windows CMD:**
+```batch
+curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
+```
+
+### Prerequisites
+
+- **Node.js 18+** - [Download](https://nodejs.org/)
+- **Claude Code CLI** - Will be installed automatically if missing
+- **API Keys** (optional): OpenAI, Google AI, Figma
+
+### Verify Installation
+
+```bash
+# Check version
+grimoires version
+
+# Check installation health
+grimoires doctor
+```
+
+### Update
+
+```bash
+grimoires update
+```
+
+### Uninstall
+
+```bash
+grimoires uninstall
+```
+
+---
+
+## Quick Start
+
+### 1. Initialize Project
+
+Open Claude Code in your project directory:
+
+```bash
+cd your-project
+claude
+```
+
+Then run the summon spell:
+
+```
+/cast:summon
+```
+
+This will:
+- Detect your project type (Frontend, Backend, Fullstack)
+- Create `grimoire.yaml` configuration
+- Set up `.claude/settings.local.json` for MCP
+
+### 2. Start Development
+
+```
+/cast:dev "새로운 기능을 구현해줘"
+```
+
+### 3. Code Review
+
+```
+/cast:review
+```
+
+### Auto-Initialization (New in 0.2.0)
+
+If you run any `/cast:*` command without `grimoire.yaml`, Grimoires will prompt you to initialize:
+
+```
+🔮 Grimoires 초기화가 필요합니다
+이 프로젝트에서 Grimoires를 사용하시겠습니까?
+
+[1] 예, 자동 설정 (권장)
+[2] 예, 직접 설정
+[3] 아니오, 취소
+```
+
+---
+
 ## Key Features
 
 | Feature | Description |
@@ -46,99 +144,53 @@ Grimoires는 Claude Code를 중심으로 여러 AI 에이전트(Codex, Gemini, S
 
 ---
 
-## Quick Start
+## Spells (Commands)
 
-### Prerequisites
-
-- Claude Code CLI
-- Node.js 18+
-- API Keys: OpenAI, Google AI (optional)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/bluelucifer/Grimoires.git
-cd Grimoires
-
-# Run installation script
-./scripts/install.sh
-
-# Configure API keys
-cp .env.example .env
-# Edit .env with your API keys
-```
-
-### Basic Usage
-
-```bash
-# Start a Grimoires session
-claude --mcp-config runes/mcp/archmage.json
-
-# Example: Request a feature
-> "사용자 인증 API를 구현해줘"
-
-# Grimoires will:
-# 1. Archmage analyzes requirements (Sequential Thinking)
-# 2. Stitch designs UI components (if needed)
-# 3. Codex implements the code
-# 4. Gemini analyzes security/performance
-# 5. Reviewer validates design principles
-# 6. Deliver the result
-```
+| Spell | Description |
+|-------|-------------|
+| `/cast:summon` | 프로젝트 초기화 |
+| `/cast:dev` | 개발 워크플로우 시작 |
+| `/cast:review` | 코드 리뷰 |
+| `/cast:analyze` | Gemini 분석 (보안/성능) |
+| `/cast:design` | UI/UX 디자인 (Stitch) |
+| `/cast:fix` | 에러 해결 (FixHive 연동) |
+| `/cast:parallel` | 병렬 작업 실행 |
 
 ---
 
 ## Directory Structure
 
+### Global Installation (`~/.grimoires/`)
+
 ```
-Grimoires/
-├── tower/                          # Archmage configuration
-│   ├── archmage.md                 # Main orchestrator definition
-│   ├── serena-guide.md             # Memory management guide
-│   ├── thinking-workflow.md        # Sequential Thinking guide
-│   ├── context-optimization.md     # Token optimization strategies
-│   └── cost-management.md          # Cost monitoring guide
-│
-├── familiars/                      # Agent definitions
-│   ├── codex.tome.md               # Code generation specialist
-│   ├── gemini.tome.md              # Code analysis specialist (1M+ tokens)
-│   ├── stitch.tome.md              # UI/UX design specialist
-│   └── reviewer.tome.md            # Quality verification specialist
-│
-├── spells/                         # Workflows
-│   ├── basic-workflow.md           # Codex-Gemini collaboration
-│   ├── auto-review.md              # Automatic review loop
-│   ├── dev-workflow.md             # Full development workflow
-│   ├── error-resolution.md         # FixHive error handling
-│   └── parallel-execution.md       # Parallel execution strategies
-│
-├── runes/                          # Configurations
-│   ├── mcp/                        # MCP settings per agent
-│   │   ├── archmage.json           # Serena + FixHive + Sequential Thinking
-│   │   ├── codex.json              # OpenAI Codex
-│   │   ├── gemini.json             # Google Gemini
-│   │   └── stitch.json             # Stitch + Skills
+~/.grimoires/
+├── bin/
+│   └── grimoires              # CLI wrapper
+├── core/
+│   ├── tower/                 # Archmage configuration
+│   ├── familiars/             # Agent definitions
+│   ├── spells/                # Workflows
+│   └── rules/                 # Design principles
+├── templates/
+│   ├── grimoire.yaml.template
+│   └── presets/
+├── mcp/                       # MCP configurations
+├── config.yaml                # Global settings
+└── version
+```
+
+### Project Structure
+
+```
+project/
+├── grimoire.yaml              # Project configuration
+├── .grimoires/                # Project-local extensions
 │   ├── rules/
-│   │   └── design-principles.md    # 16 design principles
-│   └── config/
-│       ├── auto-review.yaml        # Auto-review configuration
-│       └── cost-monitor.yaml       # Cost monitoring settings
-│
-├── docs/                           # Documentation
-│   ├── ARCHITECTURE.md             # System architecture
-│   ├── PROMPTS.md                  # Session prompts
-│   └── QUICKSTART.md               # Getting started guide
-│
-├── scripts/                        # Utility scripts
-│   └── install.sh                  # Installation script
-│
-└── .serena/                        # Serena memory (auto-generated)
-    └── memories/
-        ├── project-context.md
-        ├── architecture-decisions.md
-        ├── current-task.md
-        └── learned-patterns.md
+│   ├── spells/
+│   └── cache/
+├── .serena/                   # Memory storage
+└── .claude/
+    └── settings.local.json    # MCP settings
 ```
 
 ---
@@ -154,27 +206,131 @@ Grimoires/
 
 ---
 
-## Workflows
+## Configuration
 
-### Standard Development Flow
+### Global Configuration
+
+```yaml
+# ~/.grimoires/config.yaml
+version: "0.2.0"
+
+api_keys:
+  openai: ${OPENAI_API_KEY}
+  google: ${GOOGLE_API_KEY}
+  figma: ${FIGMA_ACCESS_TOKEN}
+
+defaults:
+  preset: auto
+  auto_init: true
+  parallel_limit: 4
+
+cost:
+  enabled: false
+  daily_budget: 10.00
+  alerts: true
+```
+
+### Project Configuration
+
+```yaml
+# grimoire.yaml
+version: "0.2"
+
+project:
+  name: my-project
+  type: fullstack
+  framework: nextjs
+
+familiars:
+  enabled:
+    - codex
+    - gemini
+    - stitch
+    - reviewer
+
+rules:
+  enabled:
+    - solid
+    - dry
+    - security
+```
+
+---
+
+## CLI Commands
+
+```bash
+grimoires version     # Show installed version
+grimoires doctor      # Check installation health
+grimoires update      # Update to latest version
+grimoires uninstall   # Remove Grimoires
+grimoires config      # Edit global configuration
+grimoires help        # Show help
+```
+
+### Example: `grimoires doctor` Output
 
 ```
-User Request → Archmage (Plan) → Stitch (UI) → Codex (Code)
-     → Gemini (Analyze) → Reviewer (Review) → Delivery
+Checking Grimoires installation...
+
+✓ Installation directory: /home/user/.grimoires
+✓ Version: 0.2.0
+✓ core/ exists (18 files)
+✓ templates/ exists (5 files)
+✓ mcp/ exists (4 files)
+✓ Global configuration exists
+✓ Claude Code CLI available
+✓ Node.js v20.10.0
+✓ PATH is configured
+
+Health check passed - installation is healthy
 ```
 
-### Auto-Review Loop
+---
 
-```
-Code Change → Reviewer → [Pass] → Done
-                      → [Fail] → Codex Fix → Re-review (max 3)
+## Troubleshooting
+
+### `grimoires: command not found`
+
+터미널을 재시작하거나 다음을 실행:
+```bash
+# bash
+source ~/.bashrc
+
+# zsh
+source ~/.zshrc
 ```
 
-### Error Resolution
+### PATH가 설정되지 않음
 
+수동으로 PATH 추가:
+```bash
+export GRIMOIRES_HOME="$HOME/.grimoires"
+export PATH="$GRIMOIRES_HOME/bin:$PATH"
 ```
-Error → FixHive Search → [Found] → Apply Solution
-                       → [Not Found] → Gemini Analyze → Codex Fix → Register
+
+### 설치 실패 (Node.js 버전)
+
+Node.js 18+ 필요:
+```bash
+node -v  # v18.0.0 이상이어야 함
+```
+
+### API 키 설정
+
+환경변수로 설정 (권장):
+```bash
+# ~/.bashrc 또는 ~/.zshrc에 추가
+export OPENAI_API_KEY="sk-..."
+export GOOGLE_API_KEY="AI..."
+```
+
+### 설치 복구
+
+문제 발생 시 재설치:
+```bash
+grimoires uninstall
+curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
 ```
 
 ---
@@ -203,51 +359,6 @@ Error → FixHive Search → [Found] → Apply Solution
 
 ---
 
-## Configuration
-
-### MCP Configuration
-
-```json
-// runes/mcp/archmage.json
-{
-  "mcpServers": {
-    "serena": {
-      "command": "npx",
-      "args": ["-y", "serena-mcp"]
-    },
-    "sequential-thinking": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
-    },
-    "fixhive": {
-      "command": "fixhive-mcp",
-      "args": []
-    }
-  }
-}
-```
-
-### Environment Variables
-
-```bash
-# .env
-OPENAI_API_KEY=sk-...          # For Codex
-GOOGLE_API_KEY=AI...           # For Gemini
-FIGMA_ACCESS_TOKEN=figd_...    # For Stitch (optional)
-```
-
-### Cost Budget (Optional)
-
-```yaml
-# runes/config/cost-monitor.yaml
-budgets:
-  daily:
-    limit: 10.00    # $10/day
-    warning: 7.00   # Alert at 70%
-```
-
----
-
 ## Terminology
 
 | Term | Description |
@@ -261,37 +372,6 @@ budgets:
 
 ---
 
-## Dependencies
-
-### Core MCP Servers
-
-| MCP | Purpose | Required |
-|-----|---------|----------|
-| [Serena](https://github.com/oraios/serena) | Memory management | Yes |
-| [Sequential Thinking](https://github.com/modelcontextprotocol/servers) | Structured reasoning | Yes |
-| FixHive | Error knowledge base | Yes |
-
-### Familiar MCP Servers
-
-| MCP | Purpose | Required |
-|-----|---------|----------|
-| Codex MCP | OpenAI Codex | For coding tasks |
-| [Gemini MCP](https://github.com/RLabs-Inc/gemini-mcp) | Google Gemini | For analysis |
-| [Stitch MCP](https://github.com/anthropics/stitch-mcp) | UI generation | For design tasks |
-
----
-
-## Performance Targets
-
-| Metric | Target |
-|--------|--------|
-| Main Context Usage | < 100K tokens |
-| First-pass Review Rate | > 70% |
-| FixHive Hit Rate | > 50% |
-| Critical Issues | 0 |
-
----
-
 ## Roadmap
 
 - [x] Phase 1: Foundation
@@ -300,16 +380,15 @@ budgets:
 - [x] Phase 4: Automation (Auto-review, Workflows)
 - [x] Phase 5: Optimization (Context, Cost, Parallel)
 - [x] Phase 6: Documentation & Release
-- [ ] Phase 7: Testing & Refinement
-- [ ] Phase 8: Community Plugins
+- [x] Phase 7: Installation & Deployment (v0.2.0)
+- [ ] Phase 8: Testing & Refinement
+- [ ] Phase 9: Community Plugins
 
 ---
 
 ## Contributing
 
 Contributions are welcome! Please read the [contribution guidelines](CONTRIBUTING.md) before submitting a PR.
-
-### Development Setup
 
 ```bash
 # Fork and clone
@@ -320,6 +399,17 @@ git checkout -b feature/your-feature
 
 # Make changes and test
 # Submit PR
+```
+
+### File Synchronization Note
+
+이 프로젝트는 두 가지 디렉토리 구조를 유지합니다:
+- **원본** (`tower/`, `familiars/`, `spells/`, `runes/`) - 개발용
+- **배포용** (`core/`, `templates/`, `mcp/`) - 글로벌 설치용
+
+코어 파일 수정 시 `scripts/release.sh`를 실행하여 배포용 디렉토리와 동기화하세요:
+```bash
+./scripts/release.sh
 ```
 
 ---
@@ -340,4 +430,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 *A Magic Tower Project*
 
-*Version 0.1.0 | Last Updated: 2026-01-25*
+*Version 0.2.0 | Last Updated: 2026-01-25*

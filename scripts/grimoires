@@ -1,0 +1,270 @@
+#!/usr/bin/env bash
+# ============================================================
+# Grimoires CLI - Shell Wrapper
+# Multi-AI Agent Orchestration for Claude Code
+# ============================================================
+
+set -euo pipefail
+
+GRIMOIRES_HOME="${GRIMOIRES_HOME:-$HOME/.grimoires}"
+VERSION_FILE="$GRIMOIRES_HOME/version"
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
+NC='\033[0m'
+
+show_help() {
+    cat << EOF
+${MAGENTA}Grimoires${NC} - Multi-AI Agent Orchestration for Claude Code
+
+${CYAN}Usage:${NC}
+    grimoires [command]
+
+${CYAN}Commands:${NC}
+    ${GREEN}version${NC}     Show installed version
+    ${GREEN}update${NC}      Update to latest version
+    ${GREEN}uninstall${NC}   Remove Grimoires from system
+    ${GREEN}doctor${NC}      Check installation health
+    ${GREEN}config${NC}      Edit global configuration
+    ${GREEN}help${NC}        Show this help message
+
+${CYAN}Project Commands (run in project directory):${NC}
+    ${GREEN}init${NC}        Show how to initialize Grimoires for current project
+
+${CYAN}Note:${NC} Most Grimoires commands are used within Claude Code:
+    /cast:summon    - Initialize project
+    /cast:dev       - Start development workflow
+    /cast:review    - Code review
+    /cast:analyze   - Code analysis
+    /cast:design    - Design workflow
+    /cast:fix       - Fix errors
+    /cast:parallel  - Parallel execution
+
+${CYAN}Documentation:${NC}
+    https://github.com/bluelucifer/Grimoires
+
+EOF
+}
+
+show_version() {
+    if [ -f "$VERSION_FILE" ]; then
+        echo -e "${MAGENTA}Grimoires${NC} v$(cat "$VERSION_FILE")"
+    else
+        echo -e "${MAGENTA}Grimoires${NC} (version unknown)"
+    fi
+}
+
+run_update() {
+    echo -e "${BLUE}Updating Grimoires...${NC}"
+    echo ""
+
+    # Check for curl
+    if command -v curl &> /dev/null; then
+        curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+    elif command -v wget &> /dev/null; then
+        wget -qO- https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+    else
+        echo -e "${RED}Error: curl or wget required for update${NC}"
+        exit 1
+    fi
+}
+
+run_uninstall() {
+    echo -e "${YELLOW}Running uninstaller...${NC}"
+    echo ""
+
+    # Try local uninstaller first
+    if [ -f "$GRIMOIRES_HOME/scripts/uninstall.sh" ]; then
+        bash "$GRIMOIRES_HOME/scripts/uninstall.sh"
+    elif command -v curl &> /dev/null; then
+        curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/uninstall.sh | bash
+    elif command -v wget &> /dev/null; then
+        wget -qO- https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/uninstall.sh | bash
+    else
+        echo -e "${RED}Error: curl or wget required for uninstall${NC}"
+        exit 1
+    fi
+}
+
+run_doctor() {
+    echo -e "${CYAN}Checking Grimoires installation...${NC}"
+    echo ""
+
+    local errors=0
+    local warnings=0
+
+    # Check installation directory
+    if [ -d "$GRIMOIRES_HOME" ]; then
+        echo -e "${GREEN}✓${NC} Installation directory: $GRIMOIRES_HOME"
+    else
+        echo -e "${RED}✗${NC} Installation directory not found"
+        ((errors++))
+    fi
+
+    # Check version file
+    if [ -f "$VERSION_FILE" ]; then
+        echo -e "${GREEN}✓${NC} Version: $(cat "$VERSION_FILE")"
+    else
+        echo -e "${YELLOW}⚠${NC} Version file not found"
+        ((warnings++))
+    fi
+
+    # Check core directories
+    for dir in core templates mcp; do
+        if [ -d "$GRIMOIRES_HOME/$dir" ]; then
+            local count=$(find "$GRIMOIRES_HOME/$dir" -type f 2>/dev/null | wc -l)
+            echo -e "${GREEN}✓${NC} $dir/ exists ($count files)"
+        else
+            echo -e "${YELLOW}⚠${NC} $dir/ not found"
+            ((warnings++))
+        fi
+    done
+
+    # Check config file
+    if [ -f "$GRIMOIRES_HOME/config.yaml" ]; then
+        echo -e "${GREEN}✓${NC} Global configuration exists"
+    else
+        echo -e "${YELLOW}⚠${NC} Global configuration not found"
+        ((warnings++))
+    fi
+
+    # Check Claude Code CLI
+    if command -v claude &> /dev/null; then
+        echo -e "${GREEN}✓${NC} Claude Code CLI available"
+    else
+        echo -e "${YELLOW}⚠${NC} Claude Code CLI not found"
+        ((warnings++))
+    fi
+
+    # Check Node.js
+    if command -v node &> /dev/null; then
+        local node_version=$(node -v)
+        echo -e "${GREEN}✓${NC} Node.js $node_version"
+    else
+        echo -e "${YELLOW}⚠${NC} Node.js not found"
+        ((warnings++))
+    fi
+
+    # Check PATH
+    if echo "$PATH" | grep -q "$GRIMOIRES_HOME/bin"; then
+        echo -e "${GREEN}✓${NC} PATH is configured"
+    else
+        echo -e "${YELLOW}⚠${NC} PATH may not be configured (restart terminal)"
+        ((warnings++))
+    fi
+
+    echo ""
+
+    if [ $errors -gt 0 ]; then
+        echo -e "${RED}Health check failed with $errors errors${NC}"
+        echo "Run 'grimoires update' to repair installation"
+        exit 1
+    elif [ $warnings -gt 0 ]; then
+        echo -e "${YELLOW}Health check completed with $warnings warnings${NC}"
+    else
+        echo -e "${GREEN}Health check passed - installation is healthy${NC}"
+    fi
+}
+
+run_config() {
+    local config_file="$GRIMOIRES_HOME/config.yaml"
+
+    if [ ! -f "$config_file" ]; then
+        echo -e "${YELLOW}Configuration file not found. Creating default...${NC}"
+        mkdir -p "$GRIMOIRES_HOME"
+        cat > "$config_file" << 'EOF'
+# Grimoires Global Configuration
+version: "0.2.0"
+
+api_keys:
+  openai: ${OPENAI_API_KEY}
+  google: ${GOOGLE_API_KEY}
+  figma: ${FIGMA_ACCESS_TOKEN}
+
+defaults:
+  preset: auto
+  auto_init: true
+  parallel_limit: 4
+
+cost:
+  enabled: false
+  daily_budget: 10.00
+  alerts: true
+
+updates:
+  auto_check: true
+  channel: stable
+EOF
+    fi
+
+    # Try to open in editor
+    if [ -n "${EDITOR:-}" ]; then
+        $EDITOR "$config_file"
+    elif command -v code &> /dev/null; then
+        code "$config_file"
+    elif command -v nano &> /dev/null; then
+        nano "$config_file"
+    elif command -v vim &> /dev/null; then
+        vim "$config_file"
+    else
+        echo -e "${CYAN}Configuration file:${NC} $config_file"
+        echo ""
+        cat "$config_file"
+    fi
+}
+
+show_init() {
+    echo -e "${CYAN}To initialize Grimoires in a project:${NC}"
+    echo ""
+    echo "  1. Open Claude Code in your project directory:"
+    echo -e "     ${BLUE}claude${NC}"
+    echo ""
+    echo "  2. Run the summon spell:"
+    echo -e "     ${BLUE}/cast:summon${NC}"
+    echo ""
+    echo "  This will:"
+    echo "    - Detect your project type"
+    echo "    - Create grimoire.yaml configuration"
+    echo "    - Set up .grimoires/ directory"
+    echo "    - Configure MCP servers"
+    echo ""
+    echo "  Or run any /cast:* command and Grimoires will"
+    echo "  prompt you to initialize automatically."
+    echo ""
+}
+
+# Main command handler
+case "${1:-help}" in
+    version|-v|--version)
+        show_version
+        ;;
+    update)
+        run_update
+        ;;
+    uninstall)
+        run_uninstall
+        ;;
+    doctor|check)
+        run_doctor
+        ;;
+    config)
+        run_config
+        ;;
+    init)
+        show_init
+        ;;
+    help|-h|--help)
+        show_help
+        ;;
+    *)
+        echo -e "${RED}Unknown command: $1${NC}"
+        echo ""
+        show_help
+        exit 1
+        ;;
+esac

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Codex Familiar MCP Configuration - Code Generation Specialist",
+  "mcpServers": {
+    "codex": {
+      "command": "codex",
+      "args": ["--mcp-server"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "CODEX_MODEL": "gpt-4",
+        "CODEX_MAX_TOKENS": "8192"
+      },
+      "description": "OpenAI Codex for code generation, refactoring, and bug fixes"
+    }
+  }
+}
