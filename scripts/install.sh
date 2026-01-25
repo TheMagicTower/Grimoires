@@ -1,255 +1,494 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-#===============================================================================
-# Grimoires Installation Script
-# Version: 0.1.0
-#
-# This script sets up Grimoires - Multi-AI Agent Orchestration for Claude Code
-#===============================================================================
+# ============================================================
+# Grimoires Installer for Unix/Linux/macOS
+# ============================================================
 
-set -e
+VERSION="0.2.0"
+INSTALL_DIR="${GRIMOIRES_HOME:-$HOME/.grimoires}"
+REPO_URL="https://github.com/bluelucifer/Grimoires"
+RELEASE_URL="$REPO_URL/releases/latest/download"
 
-# Colors for output
+# Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# Grimoires ASCII Art
 print_banner() {
-    echo -e "${CYAN}"
-    cat << "EOF"
-   ____       _                 _
-  / ___|_ __ (_)_ __ ___   ___ (_)_ __ ___  ___
- | |  _| '__|| | '_ ` _ \ / _ \| | '__/ _ \/ __|
- | |_| | |   | | | | | | | (_) | | | |  __/\__ \
-  \____|_|   |_|_| |_| |_|\___/|_|_|  \___||___/
-
-  Multi-AI Agent Orchestration for Claude Code
-  Version 0.1.0
-EOF
+    echo -e "${MAGENTA}"
+    echo "  ╔═══════════════════════════════════════════╗"
+    echo "  ║         🔮 GRIMOIRES INSTALLER 🔮         ║"
+    echo "  ║     Multi-AI Agent Orchestration for      ║"
+    echo "  ║              Claude Code                  ║"
+    echo "  ╚═══════════════════════════════════════════╝"
     echo -e "${NC}"
 }
 
-# Print colored messages
 info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; }
-warning() { echo -e "${YELLOW}[WARNING]${NC} $1"; }
-error() { echo -e "${RED}[ERROR]${NC} $1"; }
+success() { echo -e "${GREEN}✓${NC} $1"; }
+warning() { echo -e "${YELLOW}⚠${NC} $1"; }
+error() { echo -e "${RED}✗${NC} $1"; }
 
-# Check prerequisites
 check_prerequisites() {
-    info "Checking prerequisites..."
+    echo -e "${BLUE}Checking prerequisites...${NC}"
+    echo ""
 
-    # Check Node.js
-    if command -v node &> /dev/null; then
-        NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
-        if [ "$NODE_VERSION" -ge 18 ]; then
-            success "Node.js $(node -v) found"
-        else
-            error "Node.js 18+ required, found $(node -v)"
-            exit 1
-        fi
-    else
+    # Node.js 18+
+    if ! command -v node &> /dev/null; then
         error "Node.js not found. Please install Node.js 18+"
+        echo "  Install from: https://nodejs.org/"
         exit 1
     fi
 
-    # Check npm
-    if command -v npm &> /dev/null; then
-        success "npm $(npm -v) found"
-    else
+    NODE_VERSION=$(node -v | cut -d'v' -f2 | cut -d'.' -f1)
+    if [ "$NODE_VERSION" -lt 18 ]; then
+        error "Node.js 18+ required (found: $(node -v))"
+        exit 1
+    fi
+    success "Node.js $(node -v)"
+
+    # npm
+    if ! command -v npm &> /dev/null; then
         error "npm not found"
         exit 1
     fi
+    success "npm $(npm -v)"
 
-    # Check Claude Code (optional)
-    if command -v claude &> /dev/null; then
-        success "Claude Code CLI found"
-    else
-        warning "Claude Code CLI not found. Install from: https://claude.ai/code"
-    fi
-}
-
-# Create directory structure
-setup_directories() {
-    info "Setting up directory structure..."
-
-    # Create .serena directory if not exists
-    mkdir -p .serena/memories
-    mkdir -p .serena/index
-
-    # Create logs directory
-    mkdir -p .grimoires/logs
-    mkdir -p .grimoires/cache
-
-    success "Directory structure created"
-}
-
-# Install MCP dependencies
-install_mcp_dependencies() {
-    info "Installing MCP dependencies..."
-
-    echo ""
-    info "The following MCP servers will be available:"
-    echo "  - serena-mcp (Memory management)"
-    echo "  - @modelcontextprotocol/server-sequential-thinking (Reasoning)"
-    echo "  - fixhive-mcp (Error knowledge base)"
-    echo ""
-
-    # Note: MCPs are loaded dynamically via npx, no pre-installation needed
-    # But we can verify they're accessible
-
-    info "Verifying MCP availability..."
-
-    # Test npx availability
-    if npx --version &> /dev/null; then
-        success "npx available for dynamic MCP loading"
-    else
-        warning "npx not working properly"
-    fi
-}
-
-# Create environment file
-setup_environment() {
-    info "Setting up environment..."
-
-    if [ ! -f .env ]; then
-        cat > .env << 'EOF'
-# Grimoires Environment Configuration
-# Copy this file to .env and fill in your API keys
-
-# OpenAI API Key (for Codex Familiar)
-# Get from: https://platform.openai.com/api-keys
-OPENAI_API_KEY=
-
-# Google AI API Key (for Gemini Familiar)
-# Get from: https://makersuite.google.com/app/apikey
-GOOGLE_API_KEY=
-
-# Figma Access Token (for Stitch Familiar - optional)
-# Get from: https://www.figma.com/developers/api#access-tokens
-FIGMA_ACCESS_TOKEN=
-
-# Cost Management (optional)
-GRIMOIRES_DAILY_BUDGET=10.00
-GRIMOIRES_ENABLE_COST_ALERTS=true
-EOF
-        success "Created .env file"
-        warning "Please edit .env and add your API keys"
-    else
-        info ".env file already exists, skipping"
-    fi
-
-    # Add .env to .gitignore if not already
-    if ! grep -q "^\.env$" .gitignore 2>/dev/null; then
-        echo ".env" >> .gitignore
-        info "Added .env to .gitignore"
-    fi
-}
-
-# Initialize Serena memories
-init_serena_memories() {
-    info "Initializing Serena memories..."
-
-    # Check if memories already exist
-    if [ -f .serena/memories/project-context.md ]; then
-        info "Serena memories already initialized"
-        return
-    fi
-
-    success "Serena memories ready"
-}
-
-# Verify installation
-verify_installation() {
-    info "Verifying installation..."
-
-    local errors=0
-
-    # Check required files
-    local required_files=(
-        "tower/archmage.md"
-        "familiars/codex.tome.md"
-        "familiars/gemini.tome.md"
-        "familiars/stitch.tome.md"
-        "familiars/reviewer.tome.md"
-        "runes/mcp/archmage.json"
-        "runes/rules/design-principles.md"
-    )
-
-    for file in "${required_files[@]}"; do
-        if [ -f "$file" ]; then
-            echo -e "  ${GREEN}✓${NC} $file"
+    # Claude Code CLI
+    if ! command -v claude &> /dev/null; then
+        warning "Claude Code CLI not found"
+        echo "  Install: npm install -g @anthropic-ai/claude-code"
+        echo ""
+        read -p "Install Claude Code now? [Y/n] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+            npm install -g @anthropic-ai/claude-code
+            success "Claude Code CLI installed"
         else
-            echo -e "  ${RED}✗${NC} $file (missing)"
-            ((errors++))
+            error "Claude Code is required. Exiting."
+            exit 1
         fi
-    done
-
-    if [ $errors -eq 0 ]; then
-        success "All required files present"
     else
-        error "$errors required files missing"
-        return 1
+        success "Claude Code CLI"
     fi
 }
 
-# Print usage instructions
-print_usage() {
+download_grimoires() {
     echo ""
-    echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
-    echo -e "${GREEN}Installation Complete!${NC}"
-    echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
-    echo ""
-    echo -e "${YELLOW}Next Steps:${NC}"
-    echo ""
-    echo "1. Configure API Keys:"
-    echo "   ${BLUE}nano .env${NC}"
-    echo "   Add your OPENAI_API_KEY and GOOGLE_API_KEY"
-    echo ""
-    echo "2. Start Grimoires with Claude Code:"
-    echo "   ${BLUE}claude --mcp-config runes/mcp/archmage.json${NC}"
-    echo ""
-    echo "3. Try a simple request:"
-    echo "   ${CYAN}> \"프로젝트 구조를 분석해줘\"${NC}"
-    echo ""
-    echo -e "${YELLOW}Documentation:${NC}"
-    echo "   - Quick Start: docs/QUICKSTART.md"
-    echo "   - Architecture: docs/ARCHITECTURE.md"
-    echo "   - README: README.md"
-    echo ""
-    echo -e "${CYAN}═══════════════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}Downloading Grimoires...${NC}"
+
+    # Remove existing installation
+    if [ -d "$INSTALL_DIR" ]; then
+        info "Removing existing installation..."
+        rm -rf "$INSTALL_DIR"
+    fi
+
+    # Create directory
+    mkdir -p "$INSTALL_DIR"
+
+    # Try downloading release tarball
+    local downloaded=false
+
+    if command -v curl &> /dev/null; then
+        if curl -fsSL "$RELEASE_URL/grimoires-core.tar.gz" -o "/tmp/grimoires-core.tar.gz" 2>/dev/null; then
+            tar -xzf "/tmp/grimoires-core.tar.gz" -C "$INSTALL_DIR"
+            rm -f "/tmp/grimoires-core.tar.gz"
+            downloaded=true
+        fi
+    elif command -v wget &> /dev/null; then
+        if wget -qO "/tmp/grimoires-core.tar.gz" "$RELEASE_URL/grimoires-core.tar.gz" 2>/dev/null; then
+            tar -xzf "/tmp/grimoires-core.tar.gz" -C "$INSTALL_DIR"
+            rm -f "/tmp/grimoires-core.tar.gz"
+            downloaded=true
+        fi
+    fi
+
+    # Fallback to git clone
+    if [ "$downloaded" = false ]; then
+        info "Release not found, cloning from repository..."
+        if command -v git &> /dev/null; then
+            git clone --depth 1 "$REPO_URL.git" "$INSTALL_DIR/repo" 2>/dev/null || {
+                error "Failed to clone repository"
+                exit 1
+            }
+            # Copy core files
+            cp -r "$INSTALL_DIR/repo/core" "$INSTALL_DIR/" 2>/dev/null || true
+            cp -r "$INSTALL_DIR/repo/templates" "$INSTALL_DIR/" 2>/dev/null || true
+            cp -r "$INSTALL_DIR/repo/mcp" "$INSTALL_DIR/" 2>/dev/null || true
+            # Fallback: copy old structure if new doesn't exist
+            if [ ! -d "$INSTALL_DIR/core" ]; then
+                mkdir -p "$INSTALL_DIR/core"
+                cp -r "$INSTALL_DIR/repo/tower" "$INSTALL_DIR/core/" 2>/dev/null || true
+                cp -r "$INSTALL_DIR/repo/familiars" "$INSTALL_DIR/core/" 2>/dev/null || true
+                cp -r "$INSTALL_DIR/repo/spells" "$INSTALL_DIR/core/" 2>/dev/null || true
+                cp -r "$INSTALL_DIR/repo/runes/rules" "$INSTALL_DIR/core/" 2>/dev/null || true
+                cp -r "$INSTALL_DIR/repo/runes/mcp" "$INSTALL_DIR/mcp" 2>/dev/null || true
+                cp -r "$INSTALL_DIR/repo/registry/templates" "$INSTALL_DIR/templates" 2>/dev/null || true
+            fi
+            rm -rf "$INSTALL_DIR/repo"
+        else
+            error "git is required to install from source"
+            exit 1
+        fi
+    fi
+
+    echo "$VERSION" > "$INSTALL_DIR/version"
+    success "Downloaded to $INSTALL_DIR"
 }
 
-# Main installation flow
+setup_path() {
+    echo ""
+    echo -e "${BLUE}Setting up PATH...${NC}"
+
+    BIN_DIR="$INSTALL_DIR/bin"
+    mkdir -p "$BIN_DIR"
+
+    # Create CLI wrapper
+    cat > "$BIN_DIR/grimoires" << 'WRAPPER'
+#!/usr/bin/env bash
+# Grimoires CLI wrapper
+
+GRIMOIRES_HOME="${GRIMOIRES_HOME:-$HOME/.grimoires}"
+
+show_help() {
+    cat << EOF
+Grimoires - Multi-AI Agent Orchestration for Claude Code
+
+Usage:
+    grimoires [command]
+
+Commands:
+    version     Show installed version
+    update      Update to latest version
+    uninstall   Remove Grimoires from system
+    doctor      Check installation health
+    help        Show this help message
+
+Project Commands (run in project directory):
+    init        Initialize Grimoires for current project
+
+Note: Most Grimoires commands are used within Claude Code:
+    /cast:summon    - Initialize project
+    /cast:dev       - Start development workflow
+    /cast:review    - Code review
+    /cast:analyze   - Code analysis
+    /cast:design    - Design workflow
+    /cast:fix       - Fix errors
+    /cast:parallel  - Parallel execution
+
+For more information: https://github.com/bluelucifer/Grimoires
+EOF
+}
+
+case "${1:-help}" in
+    version|-v|--version)
+        if [ -f "$GRIMOIRES_HOME/version" ]; then
+            echo "Grimoires v$(cat "$GRIMOIRES_HOME/version")"
+        else
+            echo "Grimoires (version unknown)"
+        fi
+        ;;
+    update)
+        echo "Updating Grimoires..."
+        curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+        ;;
+    uninstall)
+        echo "Running uninstaller..."
+        if [ -f "$GRIMOIRES_HOME/scripts/uninstall.sh" ]; then
+            bash "$GRIMOIRES_HOME/scripts/uninstall.sh"
+        else
+            curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/uninstall.sh | bash
+        fi
+        ;;
+    doctor)
+        echo "Checking Grimoires installation..."
+        echo ""
+
+        # Check installation directory
+        if [ -d "$GRIMOIRES_HOME" ]; then
+            echo "✓ Installation directory: $GRIMOIRES_HOME"
+        else
+            echo "✗ Installation directory not found"
+            exit 1
+        fi
+
+        # Check version file
+        if [ -f "$GRIMOIRES_HOME/version" ]; then
+            echo "✓ Version: $(cat "$GRIMOIRES_HOME/version")"
+        else
+            echo "⚠ Version file not found"
+        fi
+
+        # Check core directories
+        for dir in core templates mcp; do
+            if [ -d "$GRIMOIRES_HOME/$dir" ]; then
+                echo "✓ $dir/ exists"
+            else
+                echo "⚠ $dir/ not found"
+            fi
+        done
+
+        # Check Claude Code
+        if command -v claude &> /dev/null; then
+            echo "✓ Claude Code CLI available"
+        else
+            echo "⚠ Claude Code CLI not found"
+        fi
+
+        echo ""
+        echo "Installation health check complete."
+        ;;
+    init)
+        echo "To initialize Grimoires in a project, use Claude Code:"
+        echo "  1. Open Claude Code in your project directory"
+        echo "  2. Run: /cast:summon"
+        ;;
+    help|-h|--help|*)
+        show_help
+        ;;
+esac
+WRAPPER
+    chmod +x "$BIN_DIR/grimoires"
+
+    # Detect shell and rc file
+    SHELL_RC=""
+    SHELL_NAME=""
+
+    if [ -n "${ZSH_VERSION:-}" ] || [ -f "$HOME/.zshrc" ]; then
+        SHELL_RC="$HOME/.zshrc"
+        SHELL_NAME="zsh"
+    elif [ -n "${BASH_VERSION:-}" ] || [ -f "$HOME/.bashrc" ]; then
+        SHELL_RC="$HOME/.bashrc"
+        SHELL_NAME="bash"
+    elif [ -f "$HOME/.profile" ]; then
+        SHELL_RC="$HOME/.profile"
+        SHELL_NAME="sh"
+    fi
+
+    if [ -n "$SHELL_RC" ]; then
+        # Check if already configured
+        if ! grep -q "GRIMOIRES_HOME" "$SHELL_RC" 2>/dev/null; then
+            echo "" >> "$SHELL_RC"
+            echo "# Grimoires - Multi-AI Agent Orchestration" >> "$SHELL_RC"
+            echo "export GRIMOIRES_HOME=\"$INSTALL_DIR\"" >> "$SHELL_RC"
+            echo 'export PATH="$GRIMOIRES_HOME/bin:$PATH"' >> "$SHELL_RC"
+            success "Added to $SHELL_RC"
+        else
+            info "PATH already configured in $SHELL_RC"
+        fi
+    else
+        warning "Could not detect shell configuration file"
+        echo "  Please add these lines to your shell config:"
+        echo "    export GRIMOIRES_HOME=\"$INSTALL_DIR\""
+        echo '    export PATH="$GRIMOIRES_HOME/bin:$PATH"'
+    fi
+
+    # Also add to .profile for login shells
+    if [ -f "$HOME/.profile" ] && [ "$SHELL_RC" != "$HOME/.profile" ]; then
+        if ! grep -q "GRIMOIRES_HOME" "$HOME/.profile" 2>/dev/null; then
+            echo "" >> "$HOME/.profile"
+            echo "# Grimoires" >> "$HOME/.profile"
+            echo "export GRIMOIRES_HOME=\"$INSTALL_DIR\"" >> "$HOME/.profile"
+            echo 'export PATH="$GRIMOIRES_HOME/bin:$PATH"' >> "$HOME/.profile"
+        fi
+    fi
+}
+
+create_global_config() {
+    echo ""
+    echo -e "${BLUE}Creating global configuration...${NC}"
+
+    if [ ! -f "$INSTALL_DIR/config.yaml" ]; then
+        cat > "$INSTALL_DIR/config.yaml" << 'CONFIG'
+# Grimoires Global Configuration
+# https://github.com/bluelucifer/Grimoires
+
+version: "0.2.0"
+
+# API Keys (set via environment variables or here)
+# Note: Environment variables take precedence
+api_keys:
+  openai: ${OPENAI_API_KEY}
+  google: ${GOOGLE_API_KEY}
+  figma: ${FIGMA_ACCESS_TOKEN}
+
+# Default settings for new projects
+defaults:
+  # Preset selection: auto | minimal | frontend | backend | fullstack
+  preset: auto
+
+  # Automatically run /cast:summon when /cast:* is called without grimoire.yaml
+  auto_init: true
+
+  # Maximum parallel Familiar executions
+  parallel_limit: 4
+
+  # Default familiars to enable
+  familiars:
+    - codex
+    - gemini
+    - reviewer
+
+# Cost management settings
+cost:
+  # Enable cost tracking
+  enabled: false
+
+  # Daily budget in USD
+  daily_budget: 10.00
+
+  # Show cost alerts
+  alerts: true
+
+  # Model routing for cost optimization
+  routing:
+    simple_tasks: haiku
+    standard_tasks: sonnet
+    complex_tasks: opus
+
+# Update settings
+updates:
+  # Check for updates on grimoires commands
+  auto_check: true
+
+  # Update channel: stable | beta
+  channel: stable
+
+# Telemetry (anonymous usage statistics)
+telemetry:
+  enabled: false
+CONFIG
+        success "Configuration created at $INSTALL_DIR/config.yaml"
+    else
+        info "Configuration already exists"
+    fi
+}
+
+copy_scripts() {
+    echo ""
+    echo -e "${BLUE}Copying utility scripts...${NC}"
+
+    mkdir -p "$INSTALL_DIR/scripts"
+
+    # Copy uninstall script for offline access
+    cat > "$INSTALL_DIR/scripts/uninstall.sh" << 'UNINSTALL'
+#!/usr/bin/env bash
+set -euo pipefail
+
+INSTALL_DIR="${GRIMOIRES_HOME:-$HOME/.grimoires}"
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${YELLOW}"
+echo "  ╔═══════════════════════════════════════════╗"
+echo "  ║       🗑️  GRIMOIRES UNINSTALLER 🗑️        ║"
+echo "  ╚═══════════════════════════════════════════╝"
+echo -e "${NC}"
+
+# Confirm
+read -p "Remove Grimoires from $INSTALL_DIR? [y/N] " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Cancelled."
+    exit 0
+fi
+
+# Remove installation directory
+if [ -d "$INSTALL_DIR" ]; then
+    rm -rf "$INSTALL_DIR"
+    echo -e "${GREEN}✓ Removed $INSTALL_DIR${NC}"
+else
+    echo -e "${YELLOW}⚠ Directory not found: $INSTALL_DIR${NC}"
+fi
+
+# Clean shell rc files
+for rc in "$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile"; do
+    if [ -f "$rc" ]; then
+        # Create backup
+        cp "$rc" "${rc}.grimoires.bak"
+        # Remove Grimoires lines
+        grep -v "GRIMOIRES_HOME" "$rc" | grep -v "# Grimoires" > "${rc}.tmp" || true
+        mv "${rc}.tmp" "$rc"
+        rm -f "${rc}.grimoires.bak"
+    fi
+done
+echo -e "${GREEN}✓ Cleaned shell configuration${NC}"
+
+# Ask about project files
+echo ""
+read -p "Remove project-local .grimoires/ directories? [y/N] " -n 1 -r
+echo
+if [[ $REPLY =~ ^[Yy]$ ]]; then
+    echo "Searching for project directories..."
+    find "$HOME" -maxdepth 5 -type d -name ".grimoires" 2>/dev/null | while read dir; do
+        rm -rf "$dir"
+        echo -e "  ${GREEN}✓ Removed $dir${NC}"
+    done
+fi
+
+echo ""
+echo -e "${GREEN}═══════════════════════════════════════════${NC}"
+echo -e "${GREEN}  ✨ Grimoires uninstalled successfully ✨${NC}"
+echo -e "${GREEN}═══════════════════════════════════════════${NC}"
+echo ""
+echo "Note: Project grimoire.yaml files were preserved."
+echo "      Delete them manually if no longer needed."
+UNINSTALL
+    chmod +x "$INSTALL_DIR/scripts/uninstall.sh"
+
+    success "Utility scripts installed"
+}
+
+print_success() {
+    echo ""
+    echo -e "${GREEN}═══════════════════════════════════════════${NC}"
+    echo -e "${GREEN}  ✨ Grimoires installed successfully! ✨${NC}"
+    echo -e "${GREEN}═══════════════════════════════════════════${NC}"
+    echo ""
+    echo -e "  ${CYAN}Installation:${NC}"
+    echo "    Location: $INSTALL_DIR"
+    echo "    Version:  $VERSION"
+    echo ""
+    echo -e "  ${CYAN}Quick Start:${NC}"
+    echo "    1. Restart your terminal (or run: source ~/.zshrc)"
+    echo "    2. Navigate to your project directory"
+    echo "    3. Run any /cast: command in Claude Code"
+    echo ""
+    echo -e "  ${CYAN}Commands in Claude Code:${NC}"
+    echo "    /cast:summon    - Initialize Grimoires for project"
+    echo "    /cast:dev       - Start development workflow"
+    echo "    /cast:review    - Code review"
+    echo "    /cast:analyze   - Code analysis"
+    echo "    /cast:design    - Design workflow"
+    echo ""
+    echo -e "  ${CYAN}CLI Commands:${NC}"
+    echo "    grimoires version   - Show version"
+    echo "    grimoires doctor    - Check installation"
+    echo "    grimoires update    - Update Grimoires"
+    echo "    grimoires uninstall - Remove Grimoires"
+    echo ""
+    echo -e "  ${CYAN}Documentation:${NC}"
+    echo "    https://github.com/bluelucifer/Grimoires"
+    echo ""
+}
+
+# Main
 main() {
     print_banner
-
-    echo -e "${CYAN}Starting Grimoires installation...${NC}"
-    echo ""
-
     check_prerequisites
-    echo ""
-
-    setup_directories
-    echo ""
-
-    install_mcp_dependencies
-    echo ""
-
-    setup_environment
-    echo ""
-
-    init_serena_memories
-    echo ""
-
-    verify_installation
-
-    print_usage
+    download_grimoires
+    setup_path
+    create_global_config
+    copy_scripts
+    print_success
 }
 
-# Run main function
 main "$@"

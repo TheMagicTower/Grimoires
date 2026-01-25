@@ -1,0 +1,25 @@
+# Minimal Preset
+# Used by /init --minimal for lightweight setup
+
+preset: minimal
+description: Minimal setup for small projects or quick tasks
+
+familiars:
+  - codex
+  - reviewer
+
+rules:
+  - solid
+  - dry
+
+spells:
+  - cast-dev
+
+context:
+  focus_areas:
+    - code quality
+    - simplicity
+
+  conventions:
+    - Keep it simple
+    - Follow SOLID principles

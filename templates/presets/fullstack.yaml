@@ -1,0 +1,63 @@
+# Fullstack Project Preset
+# Used by /init when fullstack project is detected
+
+preset: fullstack
+description: Full-stack applications with frontend and backend
+
+detection:
+  files:
+    - package.json
+  dependencies:
+    all:
+      frontend:
+        any: [react, vue, svelte]
+      backend:
+        any: [express, fastify, nestjs]
+    # Or Next.js/Nuxt.js which are inherently fullstack
+    any:
+      - next
+      - nuxt
+
+  directories:
+    any:
+      - src/components
+      - src/api
+      - app/api
+      - pages/api
+
+familiars:
+  - codex
+  - gemini
+  - stitch
+  - reviewer
+
+rules:
+  - solid
+  - dry
+  - kiss
+  - security
+  - component-design
+  - api-design
+  - error-handling
+
+spells:
+  - cast-dev
+  - cast-review
+  - cast-analyze
+  - cast-design
+  - cast-fix
+  - cast-parallel
+
+context:
+  focus_areas:
+    - frontend components
+    - API routes
+    - data flow
+    - authentication
+    - state management
+
+  conventions:
+    - Separate concerns between frontend and backend
+    - Use shared types/interfaces
+    - Implement proper data validation on both ends
+    - Follow framework conventions

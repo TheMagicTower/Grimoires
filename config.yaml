@@ -1,0 +1,125 @@
+# Grimoires Global Configuration
+# https://github.com/bluelucifer/Grimoires
+#
+# This file is the global configuration template.
+# It will be installed to ~/.grimoires/config.yaml
+
+version: "0.2.0"
+
+# =============================================================================
+# API Keys
+# =============================================================================
+# Set via environment variables (recommended) or directly here.
+# Environment variables take precedence over values in this file.
+
+api_keys:
+  # OpenAI API Key (for Codex Familiar)
+  # Get from: https://platform.openai.com/api-keys
+  openai: ${OPENAI_API_KEY}
+
+  # Google AI API Key (for Gemini Familiar)
+  # Get from: https://makersuite.google.com/app/apikey
+  google: ${GOOGLE_API_KEY}
+
+  # Figma Access Token (for Stitch Familiar)
+  # Get from: https://www.figma.com/developers/api#access-tokens
+  figma: ${FIGMA_ACCESS_TOKEN}
+
+# =============================================================================
+# Default Settings
+# =============================================================================
+# These settings apply to new projects when /cast:summon is run.
+
+defaults:
+  # Preset selection for new projects
+  # Options: auto | minimal | frontend | backend | fullstack
+  # - auto: Automatically detect based on project files
+  # - minimal: Basic Grimoires with core features only
+  # - frontend: Optimized for frontend/React/Vue projects
+  # - backend: Optimized for API/server projects
+  # - fullstack: Full feature set for full-stack projects
+  preset: auto
+
+  # Automatically run /cast:summon when /cast:* is called without grimoire.yaml
+  auto_init: true
+
+  # Maximum number of parallel Familiar executions
+  parallel_limit: 4
+
+  # Default familiars to enable in new projects
+  familiars:
+    - codex      # Code generation
+    - gemini     # Code analysis
+    - reviewer   # Quality review
+    # - stitch   # UI/UX design (enable if needed)
+
+  # Default MCP servers
+  mcp:
+    - serena                # Memory management
+    - sequential-thinking   # Structured reasoning
+    - fixhive              # Error knowledge base
+
+# =============================================================================
+# Cost Management
+# =============================================================================
+# Monitor and control API costs across all familiars.
+
+cost:
+  # Enable cost tracking
+  enabled: false
+
+  # Daily budget in USD
+  daily_budget: 10.00
+
+  # Show cost alerts when approaching budget
+  alerts: true
+
+  # Budget warning threshold (percentage)
+  warning_threshold: 70
+
+  # Model routing for cost optimization
+  # Route tasks to appropriate models based on complexity
+  routing:
+    simple_tasks: haiku      # Quick, simple operations
+    standard_tasks: sonnet   # Regular development tasks
+    complex_tasks: opus      # Complex analysis, architecture
+
+# =============================================================================
+# Update Settings
+# =============================================================================
+
+updates:
+  # Check for updates when running grimoires commands
+  auto_check: true
+
+  # Update channel
+  # Options: stable | beta
+  channel: stable
+
+# =============================================================================
+# Telemetry
+# =============================================================================
+# Anonymous usage statistics to help improve Grimoires.
+
+telemetry:
+  # Enable anonymous telemetry
+  enabled: false
+
+# =============================================================================
+# Advanced Settings
+# =============================================================================
+
+advanced:
+  # Enable debug logging
+  debug: false
+
+  # Custom core directory (default: ~/.grimoires/core)
+  # core_dir: null
+
+  # Custom templates directory (default: ~/.grimoires/templates)
+  # templates_dir: null
+
+  # Cache settings
+  cache:
+    enabled: true
+    ttl: 3600  # seconds
