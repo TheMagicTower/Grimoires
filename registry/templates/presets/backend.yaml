@@ -1,0 +1,66 @@
+# Backend Project Preset
+# Used by /init when backend project is detected
+
+preset: backend
+description: API servers, microservices, backend applications
+
+detection:
+  files:
+    any:
+      - package.json
+      - pyproject.toml
+      - requirements.txt
+      - go.mod
+      - Cargo.toml
+  dependencies:
+    any:
+      - express
+      - fastify
+      - nestjs
+      - koa
+      - fastapi
+      - django
+      - flask
+      - gin
+      - actix-web
+  directories:
+    any:
+      - src/api
+      - src/routes
+      - src/controllers
+      - src/services
+      - app/api
+
+familiars:
+  - codex
+  - gemini      # Security/performance analysis
+  - reviewer
+
+rules:
+  - solid
+  - dry
+  - kiss
+  - security           # Enhanced security rules
+  - api-design
+  - error-handling
+  - defensive-programming
+
+spells:
+  - basic-workflow
+  - auto-review
+  - error-resolution
+
+context:
+  focus_areas:
+    - API endpoints
+    - authentication
+    - data validation
+    - error handling
+    - database queries
+
+  conventions:
+    - Validate all inputs
+    - Use parameterized queries
+    - Implement proper error handling
+    - Follow REST/GraphQL conventions
+    - Add appropriate logging

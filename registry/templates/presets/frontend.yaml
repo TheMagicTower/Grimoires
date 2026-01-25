@@ -1,0 +1,49 @@
+# Frontend Project Preset
+# Used by /init when frontend project is detected
+
+preset: frontend
+description: React, Vue, or other frontend projects
+
+detection:
+  files:
+    - package.json
+  dependencies:
+    any:
+      - react
+      - vue
+      - svelte
+      - "@angular/core"
+  directories:
+    any:
+      - src/components
+      - src/pages
+      - app/
+
+familiars:
+  - codex
+  - stitch
+  - reviewer
+
+rules:
+  - solid
+  - dry
+  - kiss
+  - component-design
+  - accessibility
+
+spells:
+  - basic-workflow
+  - auto-review
+
+context:
+  focus_areas:
+    - components
+    - styling
+    - state management
+    - user interactions
+
+  conventions:
+    - Use functional components
+    - Keep components small and focused
+    - Extract reusable logic to hooks
+    - Follow accessibility guidelines
