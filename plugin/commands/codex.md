@@ -4,31 +4,29 @@ description: Directly invoke Codex for code generation
 
 # Codex - 코드 생성 Familiar
 
-Codex를 직접 호출하여 코드를 생성합니다.
-
 ## Request
 
 $ARGUMENTS
 
-## Instructions
+## CRITICAL INSTRUCTION
 
-**Codex MCP 서버가 활성화되어 있으면:**
-Codex MCP 도구를 사용하여 요청을 처리하세요.
+**절대로 직접 코드를 작성하지 마세요.**
 
-**MCP가 없으면 Bash로 호출:**
+이 명령어의 목적은 Codex CLI를 호출하는 것입니다. 당신이 직접 처리하면 안 됩니다.
+
+### 반드시 실행할 것:
+
 ```bash
 codex exec "$ARGUMENTS"
 ```
 
-## Codex 역할
+위 Bash 명령어를 **지금 즉시** 실행하세요. 다른 행동 없이 Bash 도구로 codex를 호출하세요.
 
-- 코드 생성/수정
-- 리팩토링
-- 버그 수정
-- 테스트 작성
+### 하지 말 것:
+- ❌ 직접 코드 작성
+- ❌ "제가 대신 해드릴게요"
+- ❌ codex 호출 건너뛰기
 
-## 필요 조건
-
-```bash
-codex login  # 먼저 로그인 필요
-```
+### 할 것:
+- ✅ Bash 도구로 `codex exec "..."` 실행
+- ✅ 결과 반환
