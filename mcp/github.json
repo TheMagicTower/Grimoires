@@ -1,0 +1,210 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "GitHub MCP Configuration - Repository and collaboration management",
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub API integration for repository management"
+    }
+  },
+  "capabilities": {
+    "repository": {
+      "description": "Repository operations",
+      "tools": [
+        {
+          "name": "get_repository",
+          "description": "Get repository information"
+        },
+        {
+          "name": "list_branches",
+          "description": "List all branches"
+        },
+        {
+          "name": "get_branch",
+          "description": "Get branch details"
+        },
+        {
+          "name": "create_branch",
+          "description": "Create a new branch"
+        },
+        {
+          "name": "delete_branch",
+          "description": "Delete a branch"
+        }
+      ]
+    },
+    "issues": {
+      "description": "Issue management",
+      "tools": [
+        {
+          "name": "list_issues",
+          "description": "List repository issues"
+        },
+        {
+          "name": "get_issue",
+          "description": "Get issue details"
+        },
+        {
+          "name": "create_issue",
+          "description": "Create a new issue"
+        },
+        {
+          "name": "update_issue",
+          "description": "Update an issue"
+        },
+        {
+          "name": "add_issue_comment",
+          "description": "Add comment to issue"
+        }
+      ]
+    },
+    "pull_requests": {
+      "description": "Pull request management",
+      "tools": [
+        {
+          "name": "list_pull_requests",
+          "description": "List pull requests"
+        },
+        {
+          "name": "get_pull_request",
+          "description": "Get PR details"
+        },
+        {
+          "name": "create_pull_request",
+          "description": "Create a new PR"
+        },
+        {
+          "name": "update_pull_request",
+          "description": "Update a PR"
+        },
+        {
+          "name": "merge_pull_request",
+          "description": "Merge a PR"
+        },
+        {
+          "name": "list_pr_reviews",
+          "description": "List PR reviews"
+        },
+        {
+          "name": "create_pr_review",
+          "description": "Create a PR review"
+        }
+      ]
+    },
+    "files": {
+      "description": "File operations",
+      "tools": [
+        {
+          "name": "get_file_contents",
+          "description": "Get file contents"
+        },
+        {
+          "name": "create_or_update_file",
+          "description": "Create or update a file"
+        },
+        {
+          "name": "list_directory",
+          "description": "List directory contents"
+        }
+      ]
+    },
+    "actions": {
+      "description": "GitHub Actions workflows",
+      "tools": [
+        {
+          "name": "list_workflows",
+          "description": "List repository workflows"
+        },
+        {
+          "name": "get_workflow_run",
+          "description": "Get workflow run details"
+        },
+        {
+          "name": "trigger_workflow",
+          "description": "Trigger a workflow"
+        }
+      ]
+    }
+  },
+  "usage_examples": {
+    "create_pr": {
+      "description": "Create a pull request",
+      "example": {
+        "tool": "create_pull_request",
+        "params": {
+          "owner": "username",
+          "repo": "repository",
+          "title": "feat: Add new feature",
+          "body": "## Summary\n\n- Added new feature X\n- Fixed bug Y",
+          "head": "feature/new-feature",
+          "base": "main"
+        }
+      }
+    },
+    "list_issues": {
+      "description": "List open issues",
+      "example": {
+        "tool": "list_issues",
+        "params": {
+          "owner": "username",
+          "repo": "repository",
+          "state": "open",
+          "labels": ["bug", "priority:high"]
+        }
+      }
+    },
+    "get_pr_reviews": {
+      "description": "Get reviews for a PR",
+      "example": {
+        "tool": "list_pr_reviews",
+        "params": {
+          "owner": "username",
+          "repo": "repository",
+          "pull_number": 123
+        }
+      }
+    }
+  },
+  "environment": {
+    "required": [
+      {
+        "name": "GITHUB_TOKEN",
+        "description": "GitHub Personal Access Token",
+        "scopes": ["repo", "read:org"]
+      }
+    ],
+    "optional": [
+      {
+        "name": "GITHUB_API_URL",
+        "description": "GitHub API URL (for GitHub Enterprise)",
+        "default": "https://api.github.com"
+      }
+    ]
+  },
+  "integration": {
+    "spells": [
+      {
+        "spell": "/cast:dev",
+        "usage": "Create PRs after implementation"
+      },
+      {
+        "spell": "/cast:review",
+        "usage": "Fetch PR details for review"
+      },
+      {
+        "spell": "/cast:fix",
+        "usage": "Link fixes to issues"
+      }
+    ],
+    "familiars": [
+      {
+        "familiar": "Reviewer",
+        "usage": "Automated PR reviews"
+      }
+    ]
+  }
+}

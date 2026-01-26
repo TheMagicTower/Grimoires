@@ -1,0 +1,263 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Memory MCP Configuration - Persistent context and knowledge management",
+  "mcpServers": {
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {},
+      "description": "Persistent memory for context across sessions"
+    }
+  },
+  "capabilities": {
+    "entities": {
+      "description": "Entity storage and retrieval",
+      "tools": [
+        {
+          "name": "create_entities",
+          "description": "Store entities in memory",
+          "params": {
+            "entities": {
+              "type": "array",
+              "items": {
+                "name": "string",
+                "entityType": "string",
+                "observations": ["string"]
+              }
+            }
+          }
+        },
+        {
+          "name": "read_entities",
+          "description": "Retrieve entities from memory",
+          "params": {
+            "names": ["string"]
+          }
+        },
+        {
+          "name": "search_entities",
+          "description": "Search entities by observation",
+          "params": {
+            "query": "string"
+          }
+        },
+        {
+          "name": "delete_entities",
+          "description": "Remove entities from memory",
+          "params": {
+            "names": ["string"]
+          }
+        }
+      ]
+    },
+    "relations": {
+      "description": "Entity relationship management",
+      "tools": [
+        {
+          "name": "create_relations",
+          "description": "Create relationships between entities",
+          "params": {
+            "relations": {
+              "type": "array",
+              "items": {
+                "from": "string",
+                "to": "string",
+                "relationType": "string"
+              }
+            }
+          }
+        },
+        {
+          "name": "read_relations",
+          "description": "Get relations for an entity",
+          "params": {
+            "entity": "string"
+          }
+        }
+      ]
+    },
+    "observations": {
+      "description": "Add observations to entities",
+      "tools": [
+        {
+          "name": "add_observations",
+          "description": "Add observations to existing entities",
+          "params": {
+            "observations": {
+              "type": "array",
+              "items": {
+                "entityName": "string",
+                "contents": ["string"]
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  "usage_patterns": {
+    "project_context": {
+      "description": "Store project-level context",
+      "example": {
+        "tool": "create_entities",
+        "params": {
+          "entities": [
+            {
+              "name": "project:my-app",
+              "entityType": "project",
+              "observations": [
+                "Next.js 14 application",
+                "Uses TypeScript",
+                "PostgreSQL database",
+                "Deployed on Vercel"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "architecture_decisions": {
+      "description": "Track architecture decisions (ADRs)",
+      "example": {
+        "tool": "create_entities",
+        "params": {
+          "entities": [
+            {
+              "name": "adr:001-auth-strategy",
+              "entityType": "adr",
+              "observations": [
+                "Decision: Use JWT with refresh tokens",
+                "Context: Need stateless authentication for microservices",
+                "Consequences: Need to handle token refresh on client",
+                "Status: Accepted on 2024-01-15"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "code_patterns": {
+      "description": "Remember code patterns and conventions",
+      "example": {
+        "tool": "create_entities",
+        "params": {
+          "entities": [
+            {
+              "name": "pattern:error-handling",
+              "entityType": "pattern",
+              "observations": [
+                "Use custom AppError base class",
+                "Always include error code for client",
+                "Log errors with correlation ID",
+                "Return user-friendly messages"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "user_preferences": {
+      "description": "Store user preferences",
+      "example": {
+        "tool": "create_entities",
+        "params": {
+          "entities": [
+            {
+              "name": "user:preferences",
+              "entityType": "preferences",
+              "observations": [
+                "Prefers functional components over class",
+                "Uses Tailwind CSS for styling",
+                "Prefers explicit type annotations",
+                "Test-first development approach"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "integration_with_serena": {
+    "description": "Memory MCP complements Serena for persistent storage",
+    "serena_responsibilities": [
+      "Project indexing",
+      "Code search",
+      "File relationship mapping"
+    ],
+    "memory_responsibilities": [
+      "User preferences",
+      "Architecture decisions",
+      "Learned patterns",
+      "Cross-session context"
+    ],
+    "sync_strategy": {
+      "on_session_start": [
+        "Load key entities from memory",
+        "Sync with Serena's project context"
+      ],
+      "on_session_end": [
+        "Save new learned patterns",
+        "Update architecture decisions"
+      ]
+    }
+  },
+  "entity_types": {
+    "project": {
+      "description": "Project-level information",
+      "key_observations": [
+        "Tech stack",
+        "Architecture style",
+        "Deployment target",
+        "Key dependencies"
+      ]
+    },
+    "adr": {
+      "description": "Architecture Decision Records",
+      "key_observations": [
+        "Decision",
+        "Context",
+        "Consequences",
+        "Status"
+      ]
+    },
+    "pattern": {
+      "description": "Code patterns and conventions",
+      "key_observations": [
+        "Pattern name",
+        "When to use",
+        "Implementation notes"
+      ]
+    },
+    "preferences": {
+      "description": "User preferences",
+      "key_observations": [
+        "Coding style preferences",
+        "Tool preferences",
+        "Communication preferences"
+      ]
+    },
+    "task": {
+      "description": "Task tracking",
+      "key_observations": [
+        "Description",
+        "Status",
+        "Blockers",
+        "Notes"
+      ]
+    }
+  },
+  "hooks_integration": {
+    "session_start": {
+      "action": "Load relevant entities",
+      "query": "project:* OR user:preferences OR task:current"
+    },
+    "session_end": {
+      "action": "Save session learnings",
+      "create": "pattern:session-{timestamp}"
+    },
+    "pre_compact": {
+      "action": "Backup critical entities",
+      "entities": ["task:current", "adr:*"]
+    }
+  }
+}

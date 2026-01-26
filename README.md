@@ -2,7 +2,7 @@
 
 > Multi-AI Agent Orchestration Plugin Package for Claude Code
 
-A Magic Tower Project | Version 0.2.0
+A Magic Tower Project | Version 0.3.0
 
 ---
 
@@ -141,6 +141,9 @@ If you run any `/cast:*` command without `grimoire.yaml`, Grimoires will prompt 
 | **Auto Review Loop** | 자동 PR 리뷰 및 수정 반복 |
 | **Parallel Execution** | 독립 작업의 병렬 실행 최적화 |
 | **Cost Management** | API 비용 모니터링 및 최적화 |
+| **Hooks System** | 이벤트 기반 자동화 (v0.3.0) |
+| **TDD Workflow** | RED-GREEN-REFACTOR 사이클 지원 (v0.3.0) |
+| **Extended Rules** | Security, Testing, Git, Performance 규칙 (v0.3.0) |
 
 ---
 
@@ -155,6 +158,12 @@ If you run any `/cast:*` command without `grimoire.yaml`, Grimoires will prompt 
 | `/cast:design` | UI/UX 디자인 (Stitch) |
 | `/cast:fix` | 에러 해결 (FixHive 연동) |
 | `/cast:parallel` | 병렬 작업 실행 |
+| `/cast:tdd` | TDD 워크플로우 (v0.3.0) |
+| `/cast:test-coverage` | 커버리지 분석 (v0.3.0) |
+| `/cast:e2e` | E2E 테스트 (v0.3.0) |
+| `/cast:plan` | 계획 수립 (v0.3.0) |
+| `/cast:refactor` | 리팩토링 (v0.3.0) |
+| `/cast:checkpoint` | 체크포인트 관리 (v0.3.0) |
 
 ---
 
@@ -203,6 +212,7 @@ project/
 | **Gemini** | Code Analysis | gemini-mcp | 보안/성능 분석, 1M+ 토큰 컨텍스트 |
 | **Stitch** | UI/UX Design | stitch-mcp + skills | 컴포넌트 생성, Figma 연동 |
 | **Reviewer** | Quality Review | None (Claude) | PR 리뷰, 설계 원칙 검증 |
+| **TDD Guide** | Testing Specialist | None (Claude) | TDD 사이클, 테스트 설계 (v0.3.0) |
 
 ---
 
@@ -381,8 +391,9 @@ curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/
 - [x] Phase 5: Optimization (Context, Cost, Parallel)
 - [x] Phase 6: Documentation & Release
 - [x] Phase 7: Installation & Deployment (v0.2.0)
-- [ ] Phase 8: Testing & Refinement
-- [ ] Phase 9: Community Plugins
+- [x] Phase 8: Hooks, TDD, Extended Rules (v0.3.0)
+- [ ] Phase 9: Testing & Refinement
+- [ ] Phase 10: Community Plugins
 
 ---
 
@@ -430,4 +441,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 *A Magic Tower Project*
 
-*Version 0.2.0 | Last Updated: 2026-01-25*
+*Version 0.3.0 | Last Updated: 2026-01-26*

@@ -1,6 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Archmage MCP Configuration - Central Orchestrator",
+  "version": "0.3.0",
+  "hooks": {
+    "enabled": true,
+    "config": "core/hooks/hooks.json"
+  },
   "mcpServers": {
     "serena": {
       "command": "npx",

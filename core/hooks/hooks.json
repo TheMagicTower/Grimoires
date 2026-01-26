@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Grimoires Hooks Configuration - Event-driven workflow automation",
+  "version": "0.3.0",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "id": "block-dev-outside-tmux",
+        "description": "Prevent dev server from running outside tmux",
+        "matcher": "tool == 'Bash' && command matches 'npm run dev|yarn dev|pnpm dev|bun dev'",
+        "action": "block",
+        "message": "Dev server should run in tmux or a background process to avoid blocking the session"
+      },
+      {
+        "id": "git-push-confirm",
+        "description": "Require confirmation before git push",
+        "matcher": "tool == 'Bash' && command matches 'git push'",
+        "action": "confirm",
+        "message": "Are you sure you want to push to remote?"
+      },
+      {
+        "id": "destructive-git-block",
+        "description": "Block destructive git operations",
+        "matcher": "tool == 'Bash' && command matches 'git reset --hard|git clean -f|git push --force'",
+        "action": "block",
+        "message": "Destructive git operations are blocked. Use with explicit user confirmation."
+      },
+      {
+        "id": "env-file-protection",
+        "description": "Prevent editing .env files directly",
+        "matcher": "(tool == 'Write' || tool == 'Edit') && path matches '\\.env(\\..*)?$'",
+        "action": "confirm",
+        "message": "Modifying environment files. Ensure no secrets are hardcoded."
+      }
+    ],
+    "PostToolUse": [
+      {
+        "id": "auto-prettier",
+        "description": "Auto-format JS/TS files after writing",
+        "matcher": "tool == 'Write' && path matches '\\.(ts|tsx|js|jsx)$'",
+        "command": "npx prettier --write {{path}}",
+        "condition": "file_exists('package.json') && has_dependency('prettier')",
+        "silent": true
+      },
+      {
+        "id": "typecheck-on-write",
+        "description": "Run TypeScript check after modifying TS files",
+        "matcher": "tool == 'Write' && path matches '\\.tsx?$'",
+        "command": "npx tsc --noEmit",
+        "condition": "file_exists('tsconfig.json')",
+        "on_failure": "warn"
+      },
+      {
+        "id": "console-log-warn",
+        "description": "Warn about console.log statements",
+        "matcher": "tool == 'Write' && path matches '\\.(ts|tsx|js|jsx)$'",
+        "pattern": "console\\.(log|debug)",
+        "action": "warn",
+        "message": "Found console.log - remember to remove before commit"
+      },
+      {
+        "id": "lint-on-write",
+        "description": "Run ESLint on modified files",
+        "matcher": "tool == 'Write' && path matches '\\.(ts|tsx|js|jsx)$'",
+        "command": "npx eslint {{path}} --fix",
+        "condition": "file_exists('.eslintrc') || file_exists('.eslintrc.js') || file_exists('.eslintrc.json')",
+        "silent": true
+      },
+      {
+        "id": "test-on-source-change",
+        "description": "Run related tests when source files change",
+        "matcher": "tool == 'Write' && path matches 'src/.*\\.(ts|tsx)$' && !path matches '\\.test\\.'",
+        "command": "npx jest --findRelatedTests {{path}} --passWithNoTests",
+        "condition": "file_exists('jest.config.js') || file_exists('jest.config.ts')",
+        "on_failure": "warn"
+      }
+    ],
+    "SessionStart": [
+      {
+        "id": "load-context",
+        "description": "Load previous session context on start",
+        "handler": "handlers/session-start.js"
+      }
+    ],
+    "SessionEnd": [
+      {
+        "id": "save-state",
+        "description": "Save session state on end",
+        "handler": "handlers/session-end.js"
+      }
+    ],
+    "PreCompact": [
+      {
+        "id": "save-before-compact",
+        "description": "Save important state before context compaction",
+        "handler": "handlers/pre-compact.js"
+      }
+    ],
+    "Stop": [
+      {
+        "id": "completion-check",
+        "description": "Verify task completion on response end",
+        "handler": "handlers/stop.js"
+      }
+    ]
+  },
+  "settings": {
+    "enabled": true,
+    "log_level": "info",
+    "timeout_ms": 30000,
+    "parallel_hooks": false,
+    "fail_on_error": false,
+    "_comment_parallel": "parallel_hooks is false to prevent circular dependencies (e.g., PostToolUse triggering Write which triggers PostToolUse again)",
+    "_comment_fail": "fail_on_error is false so post-processing failures don't block primary operations"
+  }
+}

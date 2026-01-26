@@ -41,6 +41,10 @@ rules:
   - dry
   - kiss
   - security           # Enhanced security rules
+  - testing            # TDD and coverage rules
+  - git-workflow       # Git best practices
+  - performance        # Performance optimization
+  - coding-style       # Code style guidelines
   - api-design
   - error-handling
   - defensive-programming
@@ -50,6 +54,11 @@ spells:
   - cast-review
   - cast-analyze
   - cast-fix
+  - cast-tdd           # TDD workflow
+  - cast-test-coverage # Coverage analysis
+  - cast-plan          # Planning
+  - cast-refactor      # Refactoring
+  - cast-checkpoint    # State management
 
 context:
   focus_areas:
