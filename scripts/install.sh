@@ -676,20 +676,25 @@ setup_hooks() {
     echo ""
     echo -e "${BLUE}Setting up Claude Code hooks...${NC}"
 
-    # Check if running in CI or non-interactive mode
-    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ] || [ ! -t 0 ]; then
-        info "Non-interactive mode: skipping hooks setup"
-        info "Run manually later: grimoires hooks setup"
+    # Skip only in CI environments, but auto-install in non-interactive user installs
+    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
+        info "CI mode: skipping hooks setup"
         return
     fi
 
     if [ -f "$INSTALL_DIR/scripts/setup-hooks.sh" ]; then
-        read -p "Setup Claude Code hooks integration? [Y/n] " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+        # In non-interactive mode (curl | bash), auto-install
+        if [ ! -t 0 ]; then
+            info "Auto-installing hooks..."
             bash "$INSTALL_DIR/scripts/setup-hooks.sh" install
         else
-            info "Skipped hooks setup. Run later: grimoires hooks setup"
+            read -p "Setup Claude Code hooks integration? [Y/n] " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+                bash "$INSTALL_DIR/scripts/setup-hooks.sh" install
+            else
+                info "Skipped hooks setup. Run later: grimoires hooks setup"
+            fi
         fi
     else
         warning "Hooks setup script not found"
@@ -700,20 +705,25 @@ setup_skills() {
     echo ""
     echo -e "${BLUE}Setting up Claude Code skills...${NC}"
 
-    # Check if running in CI or non-interactive mode
-    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ] || [ ! -t 0 ]; then
-        info "Non-interactive mode: skipping skills setup"
-        info "Run manually later: grimoires skills setup"
+    # Skip only in CI environments, but auto-install in non-interactive user installs
+    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
+        info "CI mode: skipping skills setup"
         return
     fi
 
     if [ -f "$INSTALL_DIR/scripts/setup-skills.sh" ]; then
-        read -p "Install /cast:* commands as Claude Code skills? [Y/n] " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+        # In non-interactive mode (curl | bash), auto-install
+        if [ ! -t 0 ]; then
+            info "Auto-installing skills..."
             bash "$INSTALL_DIR/scripts/setup-skills.sh" install
         else
-            info "Skipped skills setup. Run later: grimoires skills setup"
+            read -p "Install /cast-* commands as Claude Code skills? [Y/n] " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+                bash "$INSTALL_DIR/scripts/setup-skills.sh" install
+            else
+                info "Skipped skills setup. Run later: grimoires skills setup"
+            fi
         fi
     else
         warning "Skills setup script not found"
