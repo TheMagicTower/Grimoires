@@ -86,9 +86,27 @@ Grimoires는 다음 훅 이벤트를 지원합니다:
   "settings": {
     "enabled": true,
     "log_level": "info | debug | warn | error",
-    "timeout_ms": 30000
+    "timeout_ms": 30000,
+    "parallel_hooks": false,
+    "fail_on_error": false
   }
 }
+```
+
+#### Settings Reference
+
+| Setting | Type | Default | Description |
+|---------|------|---------|-------------|
+| `enabled` | boolean | `true` | 훅 시스템 활성화 |
+| `log_level` | string | `"info"` | 로그 레벨 |
+| `timeout_ms` | number | `30000` | 핸들러 타임아웃 (ms) |
+| `parallel_hooks` | boolean | `false` | 훅 병렬 실행 (순환 의존성 방지를 위해 `false` 권장) |
+| `fail_on_error` | boolean | `false` | 핸들러 오류 시 작업 중단 여부 |
+
+> **Note**: `parallel_hooks`가 `false`인 이유는 순환 의존성 방지입니다.
+> 예: PostToolUse → Write 트리거 → PostToolUse 재실행 방지
+
+```
 ```
 
 ### 3.2 Matcher Expressions
@@ -317,6 +335,22 @@ main();
    - 하드코딩된 시크릿
    - SQL 인젝션 패턴
 
+#### Secret Detection Patterns
+
+다음 패턴의 시크릿을 탐지하여 차단합니다:
+
+| Service | Pattern | Example |
+|---------|---------|---------|
+| OpenAI | `sk-[a-zA-Z0-9]{20,}` | `sk-abc123...` |
+| GitHub PAT | `ghp_[a-zA-Z0-9]{36}` | `ghp_xxxx...` |
+| GitHub Fine-grained | `github_pat_[a-zA-Z0-9_]{22,}` | `github_pat_xxxx...` |
+| Slack | `xox[baprs]-[a-zA-Z0-9-]{10,}` | `xoxb-xxxx...` |
+| AWS Access Key | `AKIA[A-Z0-9]{16}` | `AKIAIOSFODNN7EXAMPLE` |
+| Google API | `AIza[a-zA-Z0-9_-]{35}` | `AIzaSyDaGmWKa...` |
+| Stripe | `sk_(live\|test)_[a-zA-Z0-9]{24,}` | `sk_live_xxxx...` |
+| Private Key | `-----BEGIN.*PRIVATE KEY-----` | PEM format |
+| Hardcoded Password | `password\s*[=:]\s*['"][^'"]{8,}['"]` | `password = "secret"` |
+
 ### 6.5 post-tool-use.js
 
 도구 실행 후 처리:
@@ -326,6 +360,23 @@ main();
 3. TypeScript 타입 검사
 4. 관련 테스트 실행
 5. 파일 크기 검사
+
+#### Error Logging
+
+오류 발생 시 자동으로 로그 파일에 기록됩니다:
+
+- **위치**: `~/.grimoires/logs/post-tool-use.log`
+- **형식**: JSON (한 줄에 하나의 에러)
+- **로테이션**: 1MB 초과 시 자동 백업 (`.old`)
+- **비차단**: 로깅 실패해도 메인 작업은 계속 진행
+
+```bash
+# 로그 확인
+tail -f ~/.grimoires/logs/post-tool-use.log | jq .
+
+# 최근 오류 확인
+tail -10 ~/.grimoires/logs/post-tool-use.log | jq '.error.message'
+```
 
 ### 6.6 stop.js
 
