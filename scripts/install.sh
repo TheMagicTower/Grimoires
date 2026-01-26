@@ -184,6 +184,7 @@ Commands:
     uninstall   Remove Grimoires from system
     doctor      Check installation health
     hooks       Setup/manage Claude Code hooks
+    skills      Setup/manage Claude Code skills (/cast:* commands)
     env         Check/manage environment variables
     help        Show this help message
 
@@ -270,6 +271,14 @@ case "${1:-help}" in
             echo "✓ Claude hooks configured"
         else
             echo "⚠ Claude hooks not configured (run: grimoires hooks setup)"
+        fi
+
+        # Check Claude skills
+        if [ -d "$HOME/.claude/skills/cast-summon" ]; then
+            skill_count=$(ls -d "$HOME/.claude/skills/cast-"* 2>/dev/null | wc -l)
+            echo "✓ Claude skills configured ($skill_count spells)"
+        else
+            echo "⚠ Claude skills not configured (run: grimoires skills setup)"
         fi
 
         # Check MCP servers availability
@@ -388,6 +397,47 @@ case "${1:-help}" in
                 echo "  grimoires hooks setup"
                 echo "  grimoires hooks setup --simple"
                 echo "  grimoires hooks uninstall"
+                ;;
+        esac
+        ;;
+    skills)
+        shift 2>/dev/null || true
+        case "${1:-}" in
+            setup|install)
+                if [ -f "$GRIMOIRES_HOME/scripts/setup-skills.sh" ]; then
+                    bash "$GRIMOIRES_HOME/scripts/setup-skills.sh" install
+                else
+                    echo "Skills setup script not found. Please update Grimoires."
+                fi
+                ;;
+            uninstall|remove)
+                if [ -f "$GRIMOIRES_HOME/scripts/setup-skills.sh" ]; then
+                    bash "$GRIMOIRES_HOME/scripts/setup-skills.sh" uninstall
+                else
+                    echo "Skills setup script not found."
+                fi
+                ;;
+            list)
+                if [ -f "$GRIMOIRES_HOME/scripts/setup-skills.sh" ]; then
+                    bash "$GRIMOIRES_HOME/scripts/setup-skills.sh" list
+                else
+                    echo "No skills found."
+                fi
+                ;;
+            *)
+                echo "Grimoires Skills Management"
+                echo ""
+                echo "Usage: grimoires skills <command>"
+                echo ""
+                echo "Commands:"
+                echo "  setup     Install /cast:* spells as Claude Code skills"
+                echo "  uninstall Remove Grimoires skills"
+                echo "  list      List installed skills"
+                echo ""
+                echo "Examples:"
+                echo "  grimoires skills setup"
+                echo "  grimoires skills list"
+                echo "  grimoires skills uninstall"
                 ;;
         esac
         ;;
@@ -644,11 +694,12 @@ print_success() {
     echo "    3. Run any /cast: command in Claude Code"
     echo ""
     echo -e "  ${CYAN}Commands in Claude Code:${NC}"
-    echo "    /cast:summon    - Initialize Grimoires for project"
-    echo "    /cast:dev       - Start development workflow"
-    echo "    /cast:review    - Code review"
-    echo "    /cast:analyze   - Code analysis"
-    echo "    /cast:design    - Design workflow"
+    echo "    /cast-summon    - Initialize Grimoires for project"
+    echo "    /cast-dev       - Start development workflow"
+    echo "    /cast-review    - Code review"
+    echo "    /cast-analyze   - Code analysis"
+    echo "    /cast-design    - Design workflow"
+    echo "    /cast-tdd       - TDD workflow"
     echo ""
     echo -e "  ${CYAN}CLI Commands:${NC}"
     echo "    grimoires version   - Show version"
@@ -685,6 +736,30 @@ setup_hooks() {
     fi
 }
 
+setup_skills() {
+    echo ""
+    echo -e "${BLUE}Setting up Claude Code skills...${NC}"
+
+    # Check if running in CI or non-interactive mode
+    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ] || [ ! -t 0 ]; then
+        info "Non-interactive mode: skipping skills setup"
+        info "Run manually later: grimoires skills setup"
+        return
+    fi
+
+    if [ -f "$INSTALL_DIR/scripts/setup-skills.sh" ]; then
+        read -p "Install /cast:* commands as Claude Code skills? [Y/n] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+            bash "$INSTALL_DIR/scripts/setup-skills.sh" install
+        else
+            info "Skipped skills setup. Run later: grimoires skills setup"
+        fi
+    else
+        warning "Skills setup script not found"
+    fi
+}
+
 # Main
 main() {
     print_banner
@@ -694,6 +769,7 @@ main() {
     create_global_config
     copy_scripts
     setup_hooks
+    setup_skills
     print_success
 }
 
