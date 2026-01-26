@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Grimoires Frontend Settings Template",
+  "version": "0.3.0",
+
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright *)",
+      "Bash(npx cypress *)",
+      "Bash(npx storybook *)",
+      "Bash(npx chromatic *)",
+      "Bash(npx vite *)",
+      "Bash(npx webpack *)",
+      "Bash(npx next *)",
+      "Bash(npx create-*)"
+    ]
+  },
+
+  "context": {
+    "includePatterns": [
+      "src/components/**/*",
+      "src/pages/**/*",
+      "src/app/**/*",
+      "src/styles/**/*",
+      "src/hooks/**/*",
+      "src/context/**/*",
+      "src/lib/**/*",
+      "src/utils/**/*",
+      "public/**/*",
+      "*.config.js",
+      "*.config.ts",
+      "*.config.mjs"
+    ],
+    "priority": [
+      "src/components/**/*.tsx",
+      "src/pages/**/*.tsx",
+      "src/app/**/*.tsx"
+    ]
+  },
+
+  "familiars": {
+    "recommended": ["codex", "stitch", "reviewer"],
+    "stitch": {
+      "enabled": true,
+      "config": {
+        "framework": "react",
+        "styling": "tailwind"
+      }
+    }
+  }
+}

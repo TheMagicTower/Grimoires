@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Browser Use MCP Configuration - Browser Automation",
+  "version": "0.3.0",
+  "mcpServers": {
+    "browser-use": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-browser-use"],
+      "env": {
+        "HEADLESS": "true"
+      },
+      "description": "Browser automation for E2E testing and web scraping"
+    }
+  },
+  "tools": [
+    {
+      "name": "navigate",
+      "description": "Navigate to a URL"
+    },
+    {
+      "name": "click_element",
+      "description": "Click on an element by selector"
+    },
+    {
+      "name": "fill_form",
+      "description": "Fill form fields"
+    },
+    {
+      "name": "extract_data",
+      "description": "Extract data from page"
+    },
+    {
+      "name": "screenshot_page",
+      "description": "Capture page screenshot"
+    },
+    {
+      "name": "wait_for",
+      "description": "Wait for element or condition"
+    }
+  ],
+  "use_cases": [
+    "E2E testing",
+    "Web scraping",
+    "Form automation",
+    "Visual regression testing",
+    "Website monitoring"
+  ],
+  "requirements": {
+    "env": [],
+    "optional": true,
+    "notes": "Uses Chromium browser"
+  },
+  "config_options": {
+    "HEADLESS": {
+      "description": "Run browser in headless mode",
+      "default": "true",
+      "values": ["true", "false"]
+    },
+    "BROWSER_TIMEOUT": {
+      "description": "Navigation timeout in ms",
+      "default": "30000"
+    }
+  }
+}

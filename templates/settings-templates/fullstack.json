@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Grimoires Fullstack Settings Template",
+  "version": "0.3.0",
+
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright *)",
+      "Bash(npx cypress *)",
+      "Bash(npx storybook *)",
+      "Bash(npx vite *)",
+      "Bash(npx next *)",
+      "Bash(docker *)",
+      "Bash(docker-compose *)",
+      "Bash(psql *)",
+      "Bash(mysql *)",
+      "Bash(redis-cli *)",
+      "Bash(prisma *)",
+      "Bash(npx prisma *)",
+      "Bash(drizzle-kit *)",
+      "Bash(npx drizzle-kit *)",
+      "Bash(curl localhost*)",
+      "Bash(curl 127.0.0.1*)",
+      "Bash(curl http://localhost*)",
+      "Bash(curl http://127.0.0.1*)"
+    ]
+  },
+
+  "context": {
+    "includePatterns": [
+      "src/**/*",
+      "app/**/*",
+      "pages/**/*",
+      "components/**/*",
+      "lib/**/*",
+      "server/**/*",
+      "prisma/**/*",
+      "drizzle/**/*",
+      "public/**/*",
+      "*.config.js",
+      "*.config.ts"
+    ],
+    "priority": [
+      "app/**/*.tsx",
+      "src/app/**/*.tsx",
+      "pages/**/*.tsx",
+      "server/**/*.ts",
+      "lib/**/*.ts"
+    ]
+  },
+
+  "familiars": {
+    "recommended": ["codex", "gemini", "stitch", "reviewer"],
+    "codex": {
+      "enabled": true,
+      "config": {
+        "focus": ["components", "api-routes", "server-actions"]
+      }
+    },
+    "gemini": {
+      "enabled": true,
+      "config": {
+        "focus": ["security", "performance"],
+        "depth": "medium"
+      }
+    },
+    "stitch": {
+      "enabled": true,
+      "config": {
+        "framework": "react",
+        "styling": "tailwind"
+      }
+    }
+  },
+
+  "rules": {
+    "recommended": ["solid", "dry", "security", "react-best-practices"]
+  }
+}

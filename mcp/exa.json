@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Exa MCP Configuration - Web Search for Documentation",
+  "version": "0.3.0",
+  "mcpServers": {
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-exa"],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      },
+      "description": "Web search for documentation, APIs, and best practices"
+    }
+  },
+  "tools": [
+    {
+      "name": "web_search",
+      "description": "Search the web for documentation and solutions"
+    },
+    {
+      "name": "find_similar",
+      "description": "Find similar documents and resources"
+    },
+    {
+      "name": "get_contents",
+      "description": "Fetch and parse web page contents"
+    }
+  ],
+  "use_cases": [
+    "Latest library documentation lookup",
+    "Error message search",
+    "Best practices reference",
+    "API documentation"
+  ],
+  "requirements": {
+    "env": ["EXA_API_KEY"],
+    "optional": true,
+    "docs": "https://exa.ai"
+  }
+}

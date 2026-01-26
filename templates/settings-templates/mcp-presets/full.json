@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Full MCP Preset - All available MCP servers",
+  "version": "0.3.0",
+  "preset": "full",
+
+  "mcpServers": {
+    "serena": {
+      "command": "npx",
+      "args": ["-y", "serena-mcp"],
+      "description": "Memory and context management"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Structured reasoning"
+    },
+    "codex": {
+      "command": "codex",
+      "args": ["--mcp-server"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      },
+      "description": "OpenAI Codex for code generation"
+    },
+    "gemini": {
+      "command": "npx",
+      "args": ["-y", "gemini-mcp"],
+      "env": {
+        "GOOGLE_API_KEY": "${GOOGLE_API_KEY}"
+      },
+      "description": "Google Gemini for analysis"
+    },
+    "stitch": {
+      "command": "npx",
+      "args": ["-y", "stitch-mcp"],
+      "env": {
+        "FIGMA_ACCESS_TOKEN": "${FIGMA_ACCESS_TOKEN}"
+      },
+      "description": "Figma integration for UI/UX"
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub integration"
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Persistent memory"
+    },
+    "fixhive": {
+      "command": "npx",
+      "args": ["-y", "fixhive-mcp"],
+      "description": "Error knowledge base"
+    },
+    "exa": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-exa"],
+      "env": {
+        "EXA_API_KEY": "${EXA_API_KEY}"
+      },
+      "description": "Web search for documentation"
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      },
+      "description": "Large context management"
+    }
+  },
+
+  "required_env": [
+    "OPENAI_API_KEY",
+    "GOOGLE_API_KEY",
+    "GITHUB_TOKEN"
+  ],
+
+  "optional_env": [
+    "FIGMA_ACCESS_TOKEN",
+    "EXA_API_KEY",
+    "CONTEXT7_API_KEY"
+  ],
+
+  "recommended_for": [
+    "Enterprise projects",
+    "Full-feature development",
+    "Complex applications"
+  ]
+}
