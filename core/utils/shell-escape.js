@@ -10,8 +10,9 @@
 
 /**
  * Characters that need escaping in shell
+ * Note: Using non-global regex for test() to avoid lastIndex state issues
  */
-const SHELL_METACHARACTERS = /[|&;<>()$`\\\"' \t\n*?[\]#~=%!{}]/g;
+const SHELL_METACHARACTERS = /[|&;<>()$`\\\"' \t\n*?[\]#~=%!{}]/;
 
 /**
  * Escape a string for safe use in shell commands

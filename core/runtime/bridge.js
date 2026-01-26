@@ -58,6 +58,20 @@ const DEFAULT_PATHS = {
 };
 
 /**
+ * Sanitize path for safe logging (removes home directory)
+ * @param {string} filePath - Path to sanitize
+ * @returns {string} Sanitized path
+ */
+function sanitizePath(filePath) {
+  if (!filePath) return '<unknown>';
+  const home = process.env.HOME || '';
+  if (home && filePath.startsWith(home)) {
+    return filePath.replace(home, '~');
+  }
+  return path.basename(filePath);
+}
+
+/**
  * Hook action types
  */
 const HookAction = {
@@ -105,7 +119,7 @@ class HooksBridge {
   loadConfig() {
     try {
       if (!fs.existsSync(this.configPath)) {
-        this.log('warn', `Config not found: ${this.configPath}`);
+        this.log('warn', `Config not found: ${sanitizePath(this.configPath)}`);
         this.config = { hooks: {}, settings: { enabled: false } };
         return;
       }
@@ -145,7 +159,7 @@ class HooksBridge {
               this.log('error', `Failed to register handler ${hook.id}: ${error.message}`);
             }
           } else {
-            this.log('warn', `Handler not found: ${handlerPath}`);
+            this.log('warn', `Handler not found: ${sanitizePath(handlerPath)}`);
           }
         }
       }

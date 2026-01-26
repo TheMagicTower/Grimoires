@@ -73,7 +73,7 @@ class Tokenizer {
 
   isOperatorStart() {
     const remaining = this.input.slice(this.pos);
-    return /^(==|!=|matches|!matches)/.test(remaining);
+    return /^(==|!=|matches|!matches|startsWith|endsWith|contains|in)/.test(remaining);
   }
 
   isLogicalStart() {
@@ -98,7 +98,8 @@ class Tokenizer {
   }
 
   readOperator() {
-    const operators = ['==', '!=', 'matches', '!matches'];
+    // Order matters: longer operators first to avoid partial matches
+    const operators = ['==', '!=', '!matches', 'matches', 'startsWith', 'endsWith', 'contains', 'in'];
     for (const op of operators) {
       if (this.input.slice(this.pos).startsWith(op)) {
         this.pos += op.length;
@@ -253,6 +254,16 @@ class Evaluator {
         return this.matches(left, right);
       case '!matches':
         return !this.matches(left, right);
+      case 'startsWith':
+        return typeof left === 'string' && left.startsWith(right);
+      case 'endsWith':
+        return typeof left === 'string' && left.endsWith(right);
+      case 'contains':
+        return typeof left === 'string' && left.includes(right);
+      case 'in':
+        // Check if left value is in a comma-separated list
+        const values = right.split(',').map(v => v.trim());
+        return values.includes(String(left));
       default:
         throw new Error(`Unknown operator: ${ast.operator}`);
     }

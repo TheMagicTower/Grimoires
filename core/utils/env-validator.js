@@ -11,127 +11,15 @@ const fs = require('fs');
 const path = require('path');
 
 const GRIMOIRES_HOME = process.env.GRIMOIRES_HOME || path.join(process.env.HOME || '', '.grimoires');
-const SCHEMA_PATH = path.join(GRIMOIRES_HOME, 'core', 'config', 'env-schema.yaml');
-
-// Simple YAML parser for our schema format
-function parseYaml(content) {
-  const result = {
-    version: '',
-    variables: [],
-    groups: {},
-    categories: {}
-  };
-
-  let currentSection = null;
-  let currentItem = null;
-  let currentGroup = null;
-  let currentCategory = null;
-  const lines = content.split('\n');
-
-  for (const line of lines) {
-    const trimmed = line.trim();
-
-    // Skip comments and empty lines
-    if (trimmed.startsWith('#') || trimmed === '') continue;
-
-    // Top-level keys
-    if (!line.startsWith(' ') && !line.startsWith('\t')) {
-      if (trimmed.startsWith('version:')) {
-        result.version = trimmed.split(':')[1].trim().replace(/"/g, '');
-      } else if (trimmed === 'variables:') {
-        currentSection = 'variables';
-      } else if (trimmed === 'groups:') {
-        currentSection = 'groups';
-      } else if (trimmed === 'categories:') {
-        currentSection = 'categories';
-      }
-      continue;
-    }
-
-    // Variables section
-    if (currentSection === 'variables') {
-      if (line.match(/^\s{2}-\s+name:/)) {
-        if (currentItem) {
-          result.variables.push(currentItem);
-        }
-        currentItem = {
-          name: trimmed.split(':')[1].trim()
-        };
-      } else if (currentItem && trimmed.includes(':')) {
-        const colonIdx = trimmed.indexOf(':');
-        const key = trimmed.substring(0, colonIdx).trim();
-        let value = trimmed.substring(colonIdx + 1).trim();
-
-        // Handle quoted strings
-        if (value.startsWith('"') && value.endsWith('"')) {
-          value = value.slice(1, -1);
-        }
-
-        // Handle arrays
-        if (value.startsWith('[') && value.endsWith(']')) {
-          value = value.slice(1, -1).split(',').map(v => v.trim());
-        }
-
-        // Handle booleans
-        if (value === 'true') value = true;
-        if (value === 'false') value = false;
-
-        currentItem[key] = value;
-      }
-    }
-
-    // Groups section
-    if (currentSection === 'groups') {
-      if (line.match(/^\s{2}\w+:$/)) {
-        currentGroup = trimmed.replace(':', '');
-        result.groups[currentGroup] = {
-          description: '',
-          variables: []
-        };
-      } else if (currentGroup && trimmed.includes(':')) {
-        const colonIdx = trimmed.indexOf(':');
-        const key = trimmed.substring(0, colonIdx).trim();
-        let value = trimmed.substring(colonIdx + 1).trim();
-
-        if (key === 'description') {
-          value = value.replace(/"/g, '');
-        } else if (key === 'variables') {
-          value = value.slice(1, -1).split(',').map(v => v.trim());
-        }
-
-        result.groups[currentGroup][key] = value;
-      }
-    }
-
-    // Categories section
-    if (currentSection === 'categories') {
-      if (line.match(/^\s{2}\w+:$/)) {
-        currentCategory = trimmed.replace(':', '');
-        result.categories[currentCategory] = {};
-      } else if (currentCategory && trimmed.includes(':')) {
-        const colonIdx = trimmed.indexOf(':');
-        const key = trimmed.substring(0, colonIdx).trim();
-        let value = trimmed.substring(colonIdx + 1).trim().replace(/"/g, '');
-        result.categories[currentCategory][key] = value;
-      }
-    }
-  }
-
-  // Push last item
-  if (currentItem) {
-    result.variables.push(currentItem);
-  }
-
-  return result;
-}
+const SCHEMA_PATH = path.join(GRIMOIRES_HOME, 'core', 'config', 'env-schema.json');
 
 /**
- * Load environment schema
+ * Load environment schema from JSON file
  * @returns {Object} Parsed schema
  */
 function loadSchema() {
-  // Check local schema first
-  const localPath = path.join(process.cwd(), '.grimoires', 'env-schema.yaml');
+  // Check local schema first (JSON format)
+  const localPath = path.join(process.cwd(), '.grimoires', 'env-schema.json');
   const schemaPath = fs.existsSync(localPath) ? localPath : SCHEMA_PATH;
 
   if (!fs.existsSync(schemaPath)) {
@@ -157,8 +45,18 @@ function loadSchema() {
     };
   }
 
-  const content = fs.readFileSync(schemaPath, 'utf-8');
-  return parseYaml(content);
+  try {
+    const content = fs.readFileSync(schemaPath, 'utf-8');
+    return JSON.parse(content);
+  } catch (error) {
+    console.error(`[Grimoires:ERROR] Failed to parse schema: ${error.message}`);
+    return {
+      version: '0.3.0',
+      variables: [],
+      groups: { minimal: { description: 'Default', variables: [] } },
+      categories: {}
+    };
+  }
 }
 
 /**

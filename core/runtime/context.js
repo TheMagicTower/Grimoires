@@ -69,13 +69,18 @@ async function buildContext(options = {}) {
 }
 
 /**
+ * Default stdin timeout (configurable via GRIMOIRES_STDIN_TIMEOUT env var)
+ */
+const DEFAULT_STDIN_TIMEOUT = parseInt(process.env.GRIMOIRES_STDIN_TIMEOUT, 10) || 5000;
+
+/**
  * Read context from stdin (JSON format)
  * @param {Object} options - Options for reading stdin
- * @param {number} options.timeout - Timeout in ms (default: 5000)
+ * @param {number} options.timeout - Timeout in ms (default: 5000, configurable via GRIMOIRES_STDIN_TIMEOUT)
  * @returns {Promise<Object|null>}
  */
 async function readStdinContext(options = {}) {
-  const timeoutMs = options.timeout || 5000;
+  const timeoutMs = options.timeout || DEFAULT_STDIN_TIMEOUT;
 
   return new Promise((resolve) => {
     // Check if stdin is a TTY (interactive terminal)

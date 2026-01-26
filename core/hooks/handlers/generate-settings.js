@@ -147,30 +147,6 @@ function loadMcpPreset(preset) {
 }
 
 /**
- * Replace environment variable placeholders
- * @param {Object} obj - Object to process
- * @returns {Object} Processed object
- */
-function processEnvVariables(obj) {
-  const result = {};
-
-  for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === 'string' && value.startsWith('${') && value.endsWith('}')) {
-      // Keep as-is for template output
-      result[key] = value;
-    } else if (isObject(value)) {
-      result[key] = processEnvVariables(value);
-    } else if (Array.isArray(value)) {
-      result[key] = value;
-    } else {
-      result[key] = value;
-    }
-  }
-
-  return result;
-}
-
-/**
  * Clean up internal template fields
  * @param {Object} obj - Object to clean
  * @returns {Object} Cleaned object
