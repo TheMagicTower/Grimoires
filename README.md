@@ -2,7 +2,7 @@
 
 > Multi-AI Agent Orchestration Plugin Package for Claude Code
 
-A Magic Tower Project | Version 0.3.0
+A Magic Tower Project | Version 0.3.1
 
 ---
 
@@ -441,4 +441,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 *A Magic Tower Project*
 
-*Version 0.3.0 | Last Updated: 2026-01-26*
+*Version 0.3.1 | Last Updated: 2026-01-26*
