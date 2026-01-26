@@ -1,0 +1,12 @@
+{
+  "name": "cast",
+  "description": "Grimoires - Multi-AI Agent Orchestration spells for Claude Code",
+  "version": "0.3.4",
+  "author": {
+    "name": "bluelucifer",
+    "url": "https://github.com/bluelucifer/Grimoires"
+  },
+  "repository": "https://github.com/bluelucifer/Grimoires",
+  "license": "MIT",
+  "keywords": ["grimoires", "orchestration", "ai-agents", "workflow", "spells"]
+}

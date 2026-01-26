@@ -37,13 +37,13 @@ ${CYAN}Project Commands (run in project directory):${NC}
     ${GREEN}init${NC}        Show how to initialize Grimoires for current project
 
 ${CYAN}Note:${NC} Most Grimoires commands are used within Claude Code:
-    /cast:summon    - Initialize project
-    /cast:dev       - Start development workflow
-    /cast:review    - Code review
-    /cast:analyze   - Code analysis
-    /cast:design    - Design workflow
-    /cast:fix       - Fix errors
-    /cast:parallel  - Parallel execution
+    /cast-summon    - Initialize project
+    /cast-dev       - Start development workflow
+    /cast-review    - Code review
+    /cast-analyze   - Code analysis
+    /cast-design    - Design workflow
+    /cast-fix       - Fix errors
+    /cast-parallel  - Parallel execution
 
 ${CYAN}Documentation:${NC}
     https://github.com/bluelucifer/Grimoires
@@ -225,7 +225,7 @@ show_init() {
     echo -e "     ${BLUE}claude${NC}"
     echo ""
     echo "  2. Run the summon spell:"
-    echo -e "     ${BLUE}/cast:summon${NC}"
+    echo -e "     ${BLUE}/cast-summon${NC}"
     echo ""
     echo "  This will:"
     echo "    - Detect your project type"
@@ -233,7 +233,7 @@ show_init() {
     echo "    - Set up .grimoires/ directory"
     echo "    - Configure MCP servers"
     echo ""
-    echo "  Or run any /cast:* command and Grimoires will"
+    echo "  Or run any /cast-* command and Grimoires will"
     echo "  prompt you to initialize automatically."
     echo ""
 }

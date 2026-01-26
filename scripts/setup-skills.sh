@@ -2,12 +2,14 @@
 set -euo pipefail
 
 # ============================================================
-# Grimoires Skills Setup Script
-# Registers Grimoires spells as Claude Code skills
+# Grimoires Plugin Setup Script
+# Installs Grimoires as a Claude Code plugin for /cast:* commands
 # ============================================================
 
 GRIMOIRES_HOME="${GRIMOIRES_HOME:-$HOME/.grimoires}"
-CLAUDE_SKILLS_DIR="$HOME/.claude/skills"
+CLAUDE_PLUGINS_DIR="$HOME/.claude/plugins"
+PLUGIN_NAME="cast"
+PLUGIN_DIR="$CLAUDE_PLUGINS_DIR/$PLUGIN_NAME"
 
 # Colors
 RED='\033[0;31m'
@@ -25,7 +27,7 @@ error() { echo -e "${RED}✗${NC} $1"; }
 print_banner() {
     echo -e "${CYAN}"
     echo "  ╔═══════════════════════════════════════════╗"
-    echo "  ║       🔮 GRIMOIRES SKILLS SETUP 🔮        ║"
+    echo "  ║       🔮 GRIMOIRES PLUGIN SETUP 🔮        ║"
     echo "  ╚═══════════════════════════════════════════╝"
     echo -e "${NC}"
 }
@@ -38,15 +40,42 @@ check_grimoires() {
     success "Grimoires installation found"
 }
 
-setup_skills_dir() {
-    mkdir -p "$CLAUDE_SKILLS_DIR"
-    success "Skills directory ready: $CLAUDE_SKILLS_DIR"
+setup_plugin_dir() {
+    mkdir -p "$CLAUDE_PLUGINS_DIR"
+
+    # Remove existing plugin if present
+    if [ -d "$PLUGIN_DIR" ]; then
+        rm -rf "$PLUGIN_DIR"
+    fi
+
+    mkdir -p "$PLUGIN_DIR/.claude-plugin"
+    mkdir -p "$PLUGIN_DIR/skills"
+    success "Plugin directory ready: $PLUGIN_DIR"
+}
+
+# Create plugin manifest
+create_plugin_manifest() {
+    cat > "$PLUGIN_DIR/.claude-plugin/plugin.json" << 'EOF'
+{
+  "name": "cast",
+  "description": "Grimoires - Multi-AI Agent Orchestration spells for Claude Code",
+  "version": "0.3.5",
+  "author": {
+    "name": "bluelucifer",
+    "url": "https://github.com/bluelucifer/Grimoires"
+  },
+  "repository": "https://github.com/bluelucifer/Grimoires",
+  "license": "MIT"
+}
+EOF
+    success "Created plugin manifest"
 }
 
 # Create a skill from a spell
 create_skill() {
     local spell_name="$1"
-    local skill_dir="$CLAUDE_SKILLS_DIR/$spell_name"
+    local skill_name="${spell_name#cast-}"  # Remove "cast-" prefix
+    local skill_dir="$PLUGIN_DIR/skills/$skill_name"
     local spell_file="$GRIMOIRES_HOME/core/spells/$spell_name.md"
 
     if [ ! -f "$spell_file" ]; then
@@ -59,8 +88,8 @@ create_skill() {
     # Generate SKILL.md with frontmatter
     cat > "$skill_dir/SKILL.md" << EOF
 ---
-name: $spell_name
-description: Grimoires spell - $(get_spell_description "$spell_name")
+name: $skill_name
+description: $(get_spell_description "$spell_name")
 disable-model-invocation: true
 ---
 
@@ -69,7 +98,7 @@ EOF
     # Append the original spell content (skip first line if it's a header)
     tail -n +2 "$spell_file" >> "$skill_dir/SKILL.md"
 
-    success "Created skill: $spell_name"
+    success "Created skill: /cast:$skill_name"
 }
 
 # Get spell description based on name
@@ -121,9 +150,11 @@ get_spell_description() {
     esac
 }
 
-install_skills() {
+install_plugin() {
     echo ""
-    info "Installing Grimoires skills..."
+    info "Installing Grimoires plugin..."
+
+    create_plugin_manifest
 
     local spells=(
         "cast-summon"
@@ -146,78 +177,71 @@ install_skills() {
     done
 
     echo ""
-    success "All skills installed!"
+    success "Plugin installed!"
 }
 
-uninstall_skills() {
+uninstall_plugin() {
     echo ""
-    info "Removing Grimoires skills..."
+    info "Removing Grimoires plugin..."
 
-    local spells=(
-        "cast-summon"
-        "cast-dev"
-        "cast-review"
-        "cast-analyze"
-        "cast-design"
-        "cast-fix"
-        "cast-parallel"
-        "cast-tdd"
-        "cast-test-coverage"
-        "cast-e2e"
-        "cast-plan"
-        "cast-refactor"
-        "cast-checkpoint"
-    )
+    if [ -d "$PLUGIN_DIR" ]; then
+        rm -rf "$PLUGIN_DIR"
+        success "Removed plugin: $PLUGIN_DIR"
+    else
+        info "Plugin not found"
+    fi
 
-    for spell in "${spells[@]}"; do
-        if [ -d "$CLAUDE_SKILLS_DIR/$spell" ]; then
-            rm -rf "$CLAUDE_SKILLS_DIR/$spell"
-            success "Removed: $spell"
+    # Also remove old standalone skills if present
+    local old_skills_dir="$HOME/.claude/skills"
+    for skill in cast-summon cast-dev cast-review cast-analyze cast-design cast-fix cast-parallel cast-tdd cast-test-coverage cast-e2e cast-plan cast-refactor cast-checkpoint; do
+        if [ -d "$old_skills_dir/$skill" ]; then
+            rm -rf "$old_skills_dir/$skill"
+            info "Removed old skill: $skill"
         fi
     done
 
     echo ""
-    success "Skills uninstalled"
+    success "Plugin uninstalled"
 }
 
 print_success() {
     echo ""
     echo -e "${GREEN}═══════════════════════════════════════════${NC}"
-    echo -e "${GREEN}  ✨ Grimoires Skills Setup Complete! ✨${NC}"
+    echo -e "${GREEN}  ✨ Grimoires Plugin Setup Complete! ✨${NC}"
     echo -e "${GREEN}═══════════════════════════════════════════${NC}"
     echo ""
     echo -e "  ${CYAN}Available commands in Claude Code:${NC}"
-    echo "    /cast-summon      - Initialize project"
-    echo "    /cast-dev         - Development workflow"
-    echo "    /cast-review      - Code review"
-    echo "    /cast-analyze     - Code analysis"
-    echo "    /cast-design      - UI/UX design"
-    echo "    /cast-fix         - Fix errors"
-    echo "    /cast-tdd         - TDD workflow"
-    echo "    /cast-plan        - Planning"
+    echo "    /cast:summon      - Initialize project"
+    echo "    /cast:dev         - Development workflow"
+    echo "    /cast:review      - Code review"
+    echo "    /cast:analyze     - Code analysis"
+    echo "    /cast:design      - UI/UX design"
+    echo "    /cast:fix         - Fix errors"
+    echo "    /cast:tdd         - TDD workflow"
+    echo "    /cast:plan        - Planning"
     echo ""
-    echo -e "  ${CYAN}Skills location:${NC}"
-    echo "    $CLAUDE_SKILLS_DIR"
+    echo -e "  ${CYAN}Plugin location:${NC}"
+    echo "    $PLUGIN_DIR"
     echo ""
 }
 
 show_help() {
     cat << EOF
-Grimoires Skills Setup Script
+Grimoires Plugin Setup Script
 
 Usage:
     setup-skills.sh [command]
 
 Commands:
-    install     Install Grimoires spells as Claude Code skills (default)
-    uninstall   Remove Grimoires skills
+    install     Install Grimoires as Claude Code plugin (default)
+    uninstall   Remove Grimoires plugin
     list        List installed skills
     help        Show this help
 
 Examples:
-    ./setup-skills.sh              # Install skills
-    ./setup-skills.sh install      # Install skills
-    ./setup-skills.sh uninstall    # Remove skills
+    ./setup-skills.sh              # Install plugin
+    ./setup-skills.sh install      # Install plugin
+    ./setup-skills.sh uninstall    # Remove plugin
     ./setup-skills.sh list         # List skills
 
 EOF
@@ -228,17 +252,15 @@ list_skills() {
     info "Installed Grimoires skills:"
     echo ""
 
-    local found=false
-    for dir in "$CLAUDE_SKILLS_DIR"/cast-*; do
-        if [ -d "$dir" ]; then
-            local name=$(basename "$dir")
-            echo "  - /$name"
-            found=true
-        fi
-    done
-
-    if [ "$found" = false ]; then
-        warning "No Grimoires skills installed"
+    if [ -d "$PLUGIN_DIR/skills" ]; then
+        for dir in "$PLUGIN_DIR/skills"/*; do
+            if [ -d "$dir" ]; then
+                local name=$(basename "$dir")
+                echo "  - /cast:$name"
+            fi
+        done
+    else
+        warning "Grimoires plugin not installed"
         echo "  Run: grimoires skills setup"
     fi
     echo ""
@@ -254,12 +276,12 @@ main() {
     case "$COMMAND" in
         install)
             check_grimoires
-            setup_skills_dir
-            install_skills
+            setup_plugin_dir
+            install_plugin
             print_success
             ;;
         uninstall)
-            uninstall_skills
+            uninstall_plugin
             ;;
         list)
             list_skills

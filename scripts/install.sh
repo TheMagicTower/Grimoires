@@ -273,12 +273,12 @@ case "${1:-help}" in
             echo "⚠ Claude hooks not configured (run: grimoires hooks setup)"
         fi
 
-        # Check Claude skills
-        if [ -d "$HOME/.claude/skills/cast-summon" ]; then
-            skill_count=$(ls -d "$HOME/.claude/skills/cast-"* 2>/dev/null | wc -l)
-            echo "✓ Claude skills configured ($skill_count spells)"
+        # Check Grimoires plugin
+        if [ -d "$HOME/.claude/plugins/cast" ]; then
+            skill_count=$(ls -d "$HOME/.claude/plugins/cast/skills/"* 2>/dev/null | wc -l)
+            echo "✓ Grimoires plugin installed ($skill_count spells)"
         else
-            echo "⚠ Claude skills not configured (run: grimoires skills setup)"
+            echo "⚠ Grimoires plugin not installed (run: grimoires skills setup)"
         fi
 
         # Check MCP configuration files
@@ -652,12 +652,12 @@ print_success() {
     echo "    3. Run any /cast: command in Claude Code"
     echo ""
     echo -e "  ${CYAN}Commands in Claude Code:${NC}"
-    echo "    /cast-summon    - Initialize Grimoires for project"
-    echo "    /cast-dev       - Start development workflow"
-    echo "    /cast-review    - Code review"
-    echo "    /cast-analyze   - Code analysis"
-    echo "    /cast-design    - Design workflow"
-    echo "    /cast-tdd       - TDD workflow"
+    echo "    /cast:summon    - Initialize Grimoires for project"
+    echo "    /cast:dev       - Start development workflow"
+    echo "    /cast:review    - Code review"
+    echo "    /cast:analyze   - Code analysis"
+    echo "    /cast:design    - Design workflow"
+    echo "    /cast:tdd       - TDD workflow"
     echo ""
     echo -e "  ${CYAN}CLI Commands:${NC}"
     echo "    grimoires version   - Show version"
@@ -775,7 +775,7 @@ setup_skills() {
             info "Auto-installing skills..."
             bash "$INSTALL_DIR/scripts/setup-skills.sh" install
         else
-            read -p "Install /cast-* commands as Claude Code skills? [Y/n] " -n 1 -r
+            read -p "Install /cast:* commands as Claude Code skills? [Y/n] " -n 1 -r
             echo
             if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
                 bash "$INSTALL_DIR/scripts/setup-skills.sh" install
