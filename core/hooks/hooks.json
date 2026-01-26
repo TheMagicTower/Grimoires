@@ -109,6 +109,8 @@
     "log_level": "info",
     "timeout_ms": 30000,
     "parallel_hooks": false,
-    "fail_on_error": false
+    "fail_on_error": false,
+    "_comment_parallel": "parallel_hooks is false to prevent circular dependencies (e.g., PostToolUse triggering Write which triggers PostToolUse again)",
+    "_comment_fail": "fail_on_error is false so post-processing failures don't block primary operations"
   }
 }

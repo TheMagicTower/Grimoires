@@ -13,6 +13,12 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 /**
+ * Error logging configuration
+ */
+const LOG_DIR = path.join(process.env.HOME || '', '.grimoires', 'logs');
+const LOG_FILE = path.join(LOG_DIR, 'post-tool-use.log');
+
+/**
  * Tool use context passed via environment
  */
 const TOOL_CONTEXT = {
@@ -108,12 +114,57 @@ async function main() {
     }, null, 2));
 
   } catch (error) {
+    // Log error for debugging but don't block the operation
+    logError(error, result);
+
     console.error(JSON.stringify({
       status: 'error',
       error: error.message,
       result
     }, null, 2));
     // Don't exit with error - post-processing failure shouldn't block operations
+  }
+}
+
+/**
+ * Log errors to file for debugging
+ * @param {Error} error - The error that occurred
+ * @param {Object} context - Additional context information
+ */
+function logError(error, context) {
+  try {
+    // Ensure log directory exists
+    if (!fs.existsSync(LOG_DIR)) {
+      fs.mkdirSync(LOG_DIR, { recursive: true });
+    }
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      error: {
+        message: error.message,
+        stack: error.stack
+      },
+      context: {
+        tool: context.tool,
+        path: context.path,
+        actions: context.actions
+      }
+    };
+
+    const logLine = JSON.stringify(logEntry) + '\n';
+    fs.appendFileSync(LOG_FILE, logLine);
+
+    // Rotate log if too large (> 1MB)
+    const stats = fs.statSync(LOG_FILE);
+    if (stats.size > 1024 * 1024) {
+      const backupFile = LOG_FILE + '.old';
+      if (fs.existsSync(backupFile)) {
+        fs.unlinkSync(backupFile);
+      }
+      fs.renameSync(LOG_FILE, backupFile);
+    }
+  } catch (logError) {
+    // Silently fail if logging fails - don't disrupt the main flow
   }
 }
 

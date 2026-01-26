@@ -181,13 +181,26 @@ async function performSecurityCheck(ctx) {
   let block = false;
 
   // Check for hardcoded secrets
+  // Patterns are specific to reduce false positives
   const secretPatterns = [
+    // OpenAI API Keys (sk-... format)
     { pattern: /['"]sk-[a-zA-Z0-9]{20,}['"]/, name: 'OpenAI API Key' },
-    { pattern: /['"][a-zA-Z0-9]{32,}['"].*(?:key|token|secret)/i, name: 'Possible API Key' },
-    { pattern: /(?:password|passwd|pwd)\s*[=:]\s*['"][^'"]+['"]/i, name: 'Hardcoded Password' },
-    { pattern: /-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----/, name: 'Private Key' },
+    // GitHub Personal Access Tokens (ghp_... format)
     { pattern: /['"]ghp_[a-zA-Z0-9]{36}['"]/, name: 'GitHub Token' },
-    { pattern: /['"]xox[baprs]-[a-zA-Z0-9-]+['"]/, name: 'Slack Token' }
+    // GitHub Fine-grained tokens (github_pat_... format)
+    { pattern: /['"]github_pat_[a-zA-Z0-9_]{22,}['"]/, name: 'GitHub Fine-grained Token' },
+    // Slack Tokens (xox[baprs]-... format)
+    { pattern: /['"]xox[baprs]-[a-zA-Z0-9-]{10,}['"]/, name: 'Slack Token' },
+    // AWS Access Keys (AKIA... format)
+    { pattern: /['"]AKIA[A-Z0-9]{16}['"]/, name: 'AWS Access Key' },
+    // Private Keys (PEM format)
+    { pattern: /-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----/, name: 'Private Key' },
+    // Hardcoded passwords in assignment (more specific pattern)
+    { pattern: /(?:password|passwd|pwd)\s*[=:]\s*['"][^'"]{8,}['"]/i, name: 'Hardcoded Password' },
+    // Google API Keys (AIza... format)
+    { pattern: /['"]AIza[a-zA-Z0-9_-]{35}['"]/, name: 'Google API Key' },
+    // Stripe Keys (sk_live_... or sk_test_... format)
+    { pattern: /['"]sk_(?:live|test)_[a-zA-Z0-9]{24,}['"]/, name: 'Stripe Secret Key' }
   ];
 
   if (ctx.tool === 'Write' && ctx.content) {
