@@ -291,24 +291,24 @@ case "${1:-help}" in
             echo "⚠ MCP configs not found"
         fi
 
-        # Check API Keys (optional for Familiars)
+        # Check Familiar CLIs (optional)
         echo ""
-        echo "API Keys (optional - for Familiars):"
-        if [ -n "$OPENAI_API_KEY" ]; then
-            echo "✓ OPENAI_API_KEY set (Codex Familiar)"
+        echo "Familiars (optional):"
+        if command -v codex &> /dev/null; then
+            echo "✓ Codex CLI installed"
         else
-            echo "- OPENAI_API_KEY not set (optional: Codex Familiar)"
+            echo "- Codex not installed (npm i -g @openai/codex)"
         fi
 
-        if [ -n "$GOOGLE_API_KEY" ]; then
-            echo "✓ GOOGLE_API_KEY set (Gemini Familiar)"
+        if command -v gemini &> /dev/null; then
+            echo "✓ Gemini CLI installed"
         else
-            echo "- GOOGLE_API_KEY not set (optional: Gemini Familiar)"
+            echo "- Gemini not installed (npm i -g @google/gemini-cli)"
         fi
 
         echo ""
-        echo "Note: Claude Code subscription users don't need API keys."
-        echo "      API keys are only needed for external AI Familiars."
+        echo "Note: Familiars are optional. Claude handles all tasks by default."
+        echo "      CLI tools use your existing subscriptions (no API keys needed)."
 
         echo ""
         echo "Installation health check complete."
