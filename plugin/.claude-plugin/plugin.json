@@ -1,12 +1,12 @@
 {
   "name": "cast",
   "description": "Grimoires - Multi-AI Agent Orchestration spells for Claude Code",
-  "version": "0.3.4",
+  "version": "0.3.6",
   "author": {
-    "name": "TheMagicTower",
-    "url": "https://github.com/TheMagicTower/Grimoires"
+    "name": "TheMagicTower"
   },
+  "homepage": "https://github.com/TheMagicTower/Grimoires",
   "repository": "https://github.com/TheMagicTower/Grimoires",
   "license": "MIT",
-  "keywords": ["grimoires", "orchestration", "ai-agents", "workflow", "spells"]
+  "keywords": ["grimoires", "orchestration", "ai-agents", "workflow", "spells", "cast"]
 }
