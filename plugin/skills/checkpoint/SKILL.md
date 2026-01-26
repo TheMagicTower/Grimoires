@@ -1,7 +1,6 @@
 ---
 name: checkpoint
 description: Save and restore work checkpoints
-disable-model-invocation: true
 ---
 
 작업 상태를 저장하고 복원하는 마법입니다.

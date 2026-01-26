@@ -1,7 +1,6 @@
 ---
 name: analyze
 description: Deep code analysis for security and performance
-disable-model-invocation: true
 ---
 
 Gemini를 활용한 심층 코드 분석 마법입니다.

@@ -1,7 +1,6 @@
 ---
 name: summon
 description: Initialize Grimoires for a project with auto-detection
-disable-model-invocation: true
 ---
 
 프로젝트를 분석하여 적절한 Grimoires 구성을 자동으로 생성하는 초기화 마법입니다.

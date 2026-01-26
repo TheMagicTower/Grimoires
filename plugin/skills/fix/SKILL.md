@@ -1,7 +1,6 @@
 ---
 name: fix
 description: Fix errors using FixHive knowledge base
-disable-model-invocation: true
 ---
 
 FixHive 지식베이스를 활용한 에러 해결 마법입니다.

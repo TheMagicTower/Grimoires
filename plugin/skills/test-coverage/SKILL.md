@@ -1,7 +1,6 @@
 ---
 name: test-coverage
 description: Analyze and improve test coverage
-disable-model-invocation: true
 ---
 
 테스트 커버리지를 분석하고 개선하는 마법입니다.

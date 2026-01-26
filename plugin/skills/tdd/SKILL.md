@@ -1,7 +1,6 @@
 ---
 name: tdd
 description: TDD workflow with RED-GREEN-REFACTOR cycle
-disable-model-invocation: true
 ---
 
 TDD 워크플로우 마법입니다.

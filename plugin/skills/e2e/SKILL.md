@@ -1,7 +1,6 @@
 ---
 name: e2e
 description: E2E testing workflow
-disable-model-invocation: true
 ---
 
 E2E 테스트 워크플로우 마법입니다.

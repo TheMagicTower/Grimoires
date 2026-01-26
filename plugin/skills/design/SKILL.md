@@ -1,7 +1,6 @@
 ---
 name: design
 description: UI/UX design workflow with Stitch
-disable-model-invocation: true
 ---
 
 Stitch를 활용한 UI/UX 디자인 마법입니다.

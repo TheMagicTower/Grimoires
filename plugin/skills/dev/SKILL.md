@@ -1,7 +1,6 @@
 ---
 name: dev
 description: Start development workflow with AI agent orchestration
-disable-model-invocation: true
 ---
 
 개발 워크플로우를 시작하는 마법입니다.

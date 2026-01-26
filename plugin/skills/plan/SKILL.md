@@ -1,7 +1,6 @@
 ---
 name: plan
 description: Plan implementation with Sequential Thinking
-disable-model-invocation: true
 ---
 
 Sequential Thinking을 활용한 계획 수립 마법입니다.

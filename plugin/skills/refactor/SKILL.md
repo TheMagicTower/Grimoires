@@ -1,7 +1,6 @@
 ---
 name: refactor
 description: Safe refactoring workflow with tests
-disable-model-invocation: true
 ---
 
 안전한 리팩토링 워크플로우 마법입니다.

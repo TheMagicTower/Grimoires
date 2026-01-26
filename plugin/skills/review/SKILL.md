@@ -1,7 +1,6 @@
 ---
 name: review
 description: Code review with design principles validation
-disable-model-invocation: true
 ---
 
 코드 리뷰를 수행하는 마법입니다.
