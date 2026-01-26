@@ -14,19 +14,30 @@
 
 **위반 탐지 패턴**:
 ```regex
-# API Keys
+# OpenAI API Keys
 /['"]sk-[a-zA-Z0-9]{20,}['"]/
-/['"]ghp_[a-zA-Z0-9]{36}['"]/
-/['"]xox[baprs]-[a-zA-Z0-9-]+['"]/
+
+# GitHub Tokens
+/['"]ghp_[a-zA-Z0-9]{36}['"]/                    # Personal Access Token
+/['"]github_pat_[a-zA-Z0-9_]{22,}['"]/           # Fine-grained Token
+
+# Slack Tokens
+/['"]xox[baprs]-[a-zA-Z0-9-]{10,}['"]/
+
+# AWS Access Keys
+/['"]AKIA[A-Z0-9]{16}['"]/
+
+# Google API Keys
+/['"]AIza[a-zA-Z0-9_-]{35}['"]/
+
+# Stripe Keys
+/['"]sk_(?:live|test)_[a-zA-Z0-9]{24,}['"]/
 
 # Passwords
 /(?:password|passwd|pwd)\s*[=:]\s*['"][^'"]{8,}['"]/i
 
 # Private Keys
 /-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----/
-
-# Generic Tokens
-/['"][a-zA-Z0-9]{32,}['"].*(?:key|token|secret)/i
 ```
 
 **예시**:
