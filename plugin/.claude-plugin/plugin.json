@@ -1,7 +1,7 @@
 {
   "name": "cast",
   "description": "Grimoires - Multi-AI Agent Orchestration spells for Claude Code",
-  "version": "0.3.13",
+  "version": "0.3.14",
   "author": {
     "name": "TheMagicTower"
   },
