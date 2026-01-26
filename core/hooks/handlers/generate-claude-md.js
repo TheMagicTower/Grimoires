@@ -11,14 +11,48 @@
 const fs = require('fs');
 const path = require('path');
 
+// Use common detect-project utility
+const detectProjectPath = path.join(__dirname, '..', '..', 'utils', 'detect-project');
+let detectProjectModule;
+try {
+  detectProjectModule = require(detectProjectPath);
+} catch {
+  // Fallback if utility not found - will use inline implementation
+  detectProjectModule = null;
+}
+
+// Logger utility for consistent logging
+const loggerPath = path.join(__dirname, '..', '..', 'utils', 'logger');
+let logger, outputResult;
+try {
+  const loggerModule = require(loggerPath);
+  logger = loggerModule.createLogger('ClaudeMD');
+  outputResult = loggerModule.outputResult;
+} catch {
+  // Fallback if logger not found
+  logger = {
+    info: (msg) => console.error(`[Grimoires:INFO] ${msg}`),
+    warn: (msg) => console.error(`[Grimoires:WARN] ${msg}`),
+    error: (msg) => console.error(`[Grimoires:ERROR] ${msg}`)
+  };
+  outputResult = (result) => console.log(JSON.stringify(result));
+}
+
 const GRIMOIRES_HOME = process.env.GRIMOIRES_HOME || path.join(process.env.HOME || '', '.grimoires');
 const TEMPLATES_DIR = path.join(GRIMOIRES_HOME, 'templates');
 
 /**
  * Detect project information from file system
+ * Uses common utility if available, otherwise fallback inline
  * @returns {Object} Project metadata
  */
 function detectProjectInfo() {
+  // Use common utility if available
+  if (detectProjectModule && detectProjectModule.detectProjectInfo) {
+    return detectProjectModule.detectProjectInfo();
+  }
+
+  // Fallback inline implementation
   const info = {
     name: path.basename(process.cwd()),
     type: 'unknown',
@@ -44,146 +78,16 @@ function detectProjectInfo() {
 
       const deps = { ...pkg.dependencies, ...pkg.devDependencies };
 
-      // Detect framework
-      if (deps['next']) {
-        info.framework = 'Next.js';
-        info.type = 'fullstack';
-      } else if (deps['nuxt']) {
-        info.framework = 'Nuxt';
-        info.type = 'fullstack';
-      } else if (deps['remix']) {
-        info.framework = 'Remix';
-        info.type = 'fullstack';
-      } else if (deps['react']) {
-        info.framework = 'React';
-        info.type = 'frontend';
-      } else if (deps['vue']) {
-        info.framework = 'Vue';
-        info.type = 'frontend';
-      } else if (deps['svelte'] || deps['@sveltejs/kit']) {
-        info.framework = deps['@sveltejs/kit'] ? 'SvelteKit' : 'Svelte';
-        info.type = deps['@sveltejs/kit'] ? 'fullstack' : 'frontend';
-      } else if (deps['angular']) {
-        info.framework = 'Angular';
-        info.type = 'frontend';
-      } else if (deps['express']) {
-        info.framework = 'Express';
-        info.type = 'backend';
-      } else if (deps['fastify']) {
-        info.framework = 'Fastify';
-        info.type = 'backend';
-      } else if (deps['@nestjs/core']) {
-        info.framework = 'NestJS';
-        info.type = 'backend';
-      } else if (deps['hono']) {
-        info.framework = 'Hono';
-        info.type = 'backend';
-      } else if (deps['koa']) {
-        info.framework = 'Koa';
-        info.type = 'backend';
-      }
+      // Detect framework (simplified fallback)
+      if (deps['next']) { info.framework = 'Next.js'; info.type = 'fullstack'; }
+      else if (deps['react']) { info.framework = 'React'; info.type = 'frontend'; }
+      else if (deps['express']) { info.framework = 'Express'; info.type = 'backend'; }
 
       // Detect language
-      if (deps['typescript'] || fs.existsSync('tsconfig.json')) {
-        info.language = 'TypeScript';
-      } else {
-        info.language = 'JavaScript';
-      }
-
-      // Detect test framework
-      if (deps['vitest']) {
-        info.testFramework = 'Vitest';
-      } else if (deps['jest']) {
-        info.testFramework = 'Jest';
-      } else if (deps['mocha']) {
-        info.testFramework = 'Mocha';
-      }
-
-      // Detect linter
-      if (deps['eslint'] || fs.existsSync('.eslintrc') || fs.existsSync('.eslintrc.js') || fs.existsSync('eslint.config.js')) {
-        info.linter = 'ESLint';
-      } else if (deps['biome'] || deps['@biomejs/biome']) {
-        info.linter = 'Biome';
-      }
-
-      // Detect formatter
-      if (deps['prettier']) {
-        info.formatter = 'Prettier';
-      } else if (deps['biome'] || deps['@biomejs/biome']) {
-        info.formatter = 'Biome';
-      }
-
-    } catch (e) {
+      info.language = deps['typescript'] || fs.existsSync('tsconfig.json') ? 'TypeScript' : 'JavaScript';
+    } catch {
       // Ignore parse errors
     }
-  }
-
-  // Detect package manager
-  if (fs.existsSync('bun.lockb')) {
-    info.packageManager = 'bun';
-  } else if (fs.existsSync('pnpm-lock.yaml')) {
-    info.packageManager = 'pnpm';
-  } else if (fs.existsSync('yarn.lock')) {
-    info.packageManager = 'yarn';
-  } else if (fs.existsSync('package-lock.json')) {
-    info.packageManager = 'npm';
-  }
-
-  // Python projects
-  if (fs.existsSync('pyproject.toml') || fs.existsSync('requirements.txt')) {
-    info.language = 'Python';
-    info.type = info.type || 'backend';
-
-    if (fs.existsSync('pyproject.toml')) {
-      try {
-        const content = fs.readFileSync('pyproject.toml', 'utf-8');
-        if (content.includes('fastapi')) info.framework = 'FastAPI';
-        else if (content.includes('django')) info.framework = 'Django';
-        else if (content.includes('flask')) info.framework = 'Flask';
-
-        if (content.includes('pytest')) info.testFramework = 'pytest';
-      } catch (e) {}
-    }
-  }
-
-  // Go projects
-  if (fs.existsSync('go.mod')) {
-    info.language = 'Go';
-    info.type = info.type || 'backend';
-
-    try {
-      const content = fs.readFileSync('go.mod', 'utf-8');
-      if (content.includes('gin-gonic/gin')) info.framework = 'Gin';
-      else if (content.includes('gofiber/fiber')) info.framework = 'Fiber';
-      else if (content.includes('labstack/echo')) info.framework = 'Echo';
-    } catch (e) {}
-  }
-
-  // Rust projects
-  if (fs.existsSync('Cargo.toml')) {
-    info.language = 'Rust';
-    info.type = info.type || 'backend';
-
-    try {
-      const content = fs.readFileSync('Cargo.toml', 'utf-8');
-      if (content.includes('actix-web')) info.framework = 'Actix';
-      else if (content.includes('axum')) info.framework = 'Axum';
-      else if (content.includes('rocket')) info.framework = 'Rocket';
-    } catch (e) {}
-  }
-
-  // Docker
-  info.hasDocker = fs.existsSync('Dockerfile') || fs.existsSync('docker-compose.yml') || fs.existsSync('docker-compose.yaml');
-
-  // CI/CD
-  if (fs.existsSync('.github/workflows')) {
-    info.hasCI = 'GitHub Actions';
-  } else if (fs.existsSync('.gitlab-ci.yml')) {
-    info.hasCI = 'GitLab CI';
-  } else if (fs.existsSync('Jenkinsfile')) {
-    info.hasCI = 'Jenkins';
-  } else if (fs.existsSync('.circleci')) {
-    info.hasCI = 'CircleCI';
   }
 
   return info;
@@ -191,24 +95,28 @@ function detectProjectInfo() {
 
 /**
  * Get the directory structure
+ * Uses common utility if available
  * @param {string} dir - Directory to scan
  * @param {number} depth - Current depth
  * @param {number} maxDepth - Maximum depth
  * @returns {string} Tree representation
  */
 function getDirectoryStructure(dir = '.', depth = 0, maxDepth = 3) {
-  const ignore = ['node_modules', '.git', 'dist', 'build', '.next', '.cache', '__pycache__', 'venv', '.venv', 'target'];
+  // Use common utility if available
+  if (detectProjectModule && detectProjectModule.getDirectoryStructure) {
+    return detectProjectModule.getDirectoryStructure(dir, depth, maxDepth);
+  }
+
+  // Fallback inline implementation
+  const ignore = ['node_modules', '.git', 'dist', 'build', '.next'];
   const items = [];
 
   try {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
-
     for (const entry of entries) {
       if (ignore.includes(entry.name) || entry.name.startsWith('.')) continue;
-
       const indent = '│   '.repeat(depth);
       const prefix = depth === 0 ? '' : '├── ';
-
       if (entry.isDirectory() && depth < maxDepth) {
         items.push(`${indent}${prefix}${entry.name}/`);
         const subItems = getDirectoryStructure(path.join(dir, entry.name), depth + 1, maxDepth);
@@ -217,7 +125,7 @@ function getDirectoryStructure(dir = '.', depth = 0, maxDepth = 3) {
         items.push(`${indent}${prefix}${entry.name}/`);
       }
     }
-  } catch (e) {
+  } catch {
     // Ignore permission errors
   }
 

@@ -11,6 +11,31 @@
 const fs = require('fs');
 const path = require('path');
 
+// Use common detect-project utility
+const detectProjectPath = path.join(__dirname, '..', '..', 'utils', 'detect-project');
+let detectProjectModule;
+try {
+  detectProjectModule = require(detectProjectPath);
+} catch {
+  // Fallback if utility not found
+  detectProjectModule = null;
+}
+
+// Logger utility for consistent logging
+const loggerPath = path.join(__dirname, '..', '..', 'utils', 'logger');
+let logger;
+try {
+  const loggerModule = require(loggerPath);
+  logger = loggerModule.createLogger('Settings');
+} catch {
+  // Fallback if logger not found
+  logger = {
+    info: (msg) => console.error(`[Grimoires:INFO] ${msg}`),
+    warn: (msg) => console.error(`[Grimoires:WARN] ${msg}`),
+    error: (msg) => console.error(`[Grimoires:ERROR] ${msg}`)
+  };
+}
+
 const GRIMOIRES_HOME = process.env.GRIMOIRES_HOME || path.join(process.env.HOME || '', '.grimoires');
 const TEMPLATES_DIR = path.join(GRIMOIRES_HOME, 'templates', 'settings-templates');
 const OUTPUT_DIR = '.claude';
@@ -53,48 +78,30 @@ function isObject(item) {
 
 /**
  * Detect project type from file system
+ * Uses common utility if available, otherwise fallback inline
  * @returns {string} Project type: frontend, backend, fullstack, or unknown
  */
 function detectProjectType() {
-  // Check package.json
+  // Use common utility if available
+  if (detectProjectModule && detectProjectModule.detectProjectType) {
+    return detectProjectModule.detectProjectType();
+  }
+
+  // Fallback inline implementation
   if (fs.existsSync('package.json')) {
     try {
       const pkg = JSON.parse(fs.readFileSync('package.json', 'utf-8'));
       const deps = { ...pkg.dependencies, ...pkg.devDependencies };
 
-      // Fullstack frameworks
-      if (deps['next'] || deps['nuxt'] || deps['remix'] || deps['@sveltejs/kit']) {
-        return 'fullstack';
-      }
-
-      // Frontend frameworks
-      if (deps['react'] || deps['vue'] || deps['svelte'] || deps['@angular/core']) {
-        // Check for backend
-        if (deps['express'] || deps['fastify'] || deps['@nestjs/core']) {
-          return 'fullstack';
-        }
-        return 'frontend';
-      }
-
-      // Backend frameworks
-      if (deps['express'] || deps['fastify'] || deps['@nestjs/core'] || deps['koa'] || deps['hono']) {
-        return 'backend';
-      }
-    } catch (e) {}
+      if (deps['next'] || deps['nuxt'] || deps['remix']) return 'fullstack';
+      if (deps['react'] || deps['vue']) return 'frontend';
+      if (deps['express'] || deps['fastify']) return 'backend';
+    } catch {
+      // Ignore parse errors
+    }
   }
 
-  // Check Python
-  if (fs.existsSync('pyproject.toml') || fs.existsSync('requirements.txt')) {
-    return 'backend';
-  }
-
-  // Check Go
-  if (fs.existsSync('go.mod')) {
-    return 'backend';
-  }
-
-  // Check Rust
-  if (fs.existsSync('Cargo.toml')) {
+  if (fs.existsSync('pyproject.toml') || fs.existsSync('go.mod') || fs.existsSync('Cargo.toml')) {
     return 'backend';
   }
 
@@ -113,7 +120,7 @@ function loadTemplate(name) {
     try {
       return JSON.parse(fs.readFileSync(templatePath, 'utf-8'));
     } catch (e) {
-      console.error(`Error loading template ${name}: ${e.message}`);
+      logger.error(`Error loading template ${name}: ${e.message}`);
     }
   }
 
@@ -132,7 +139,7 @@ function loadMcpPreset(preset) {
     try {
       return JSON.parse(fs.readFileSync(presetPath, 'utf-8'));
     } catch (e) {
-      console.error(`Error loading MCP preset ${preset}: ${e.message}`);
+      logger.error(`Error loading MCP preset ${preset}: ${e.message}`);
     }
   }
 
@@ -238,7 +245,7 @@ function generateSettings(options = {}) {
         // User settings take precedence
         settings = deepMerge(settings, existing);
       } catch (e) {
-        console.error(`Error loading existing settings: ${e.message}`);
+        logger.warn(`Error loading existing settings: ${e.message}`);
       }
     }
   }
@@ -322,8 +329,8 @@ Examples:
 
   try {
     const detectedType = options.type || detectProjectType();
-    console.error(`[INFO] Detected project type: ${detectedType}`);
-    console.error(`[INFO] Using MCP preset: ${options.mcpPreset}`);
+    logger.info(`Detected project type: ${detectedType}`);
+    logger.info(`Using MCP preset: ${options.mcpPreset}`);
 
     const settings = generateSettings({
       type: detectedType,

@@ -14,6 +14,40 @@ const { spawn, execSync } = require('child_process');
 const { match } = require('./matcher');
 const { buildContext, exportToEnv } = require('./context');
 
+// Shell escape utility for command injection prevention
+const shellEscapePath = path.join(__dirname, '..', 'utils', 'shell-escape');
+let shellEscape;
+try {
+  shellEscape = require(shellEscapePath);
+} catch {
+  // Fallback if utility not found
+  shellEscape = {
+    safeSubstitute: (template, values) => {
+      let cmd = template;
+      for (const [key, value] of Object.entries(values)) {
+        // Basic escaping: wrap in single quotes, escape existing quotes
+        const escaped = value ? "'" + String(value).replace(/'/g, "'\\''") + "'" : '';
+        cmd = cmd.split(`{{${key}}}`).join(escaped);
+      }
+      return { command: cmd, safe: true, errors: [] };
+    }
+  };
+}
+
+// Logger utility for consistent logging
+const loggerPath = path.join(__dirname, '..', 'utils', 'logger');
+let logger;
+try {
+  logger = require(loggerPath).createLogger('Bridge');
+} catch {
+  // Fallback if logger not found
+  logger = {
+    info: (msg) => console.error(`[Grimoires:INFO] ${msg}`),
+    warn: (msg) => console.error(`[Grimoires:WARN] ${msg}`),
+    error: (msg) => console.error(`[Grimoires:ERROR] ${msg}`)
+  };
+}
+
 /**
  * Default paths for configuration
  */
@@ -333,11 +367,23 @@ class HooksBridge {
   async executeCommand(hook, context, timeout) {
     return new Promise((resolve) => {
       try {
-        // Replace placeholders in command
-        let command = hook.command;
-        command = command.replace(/\{\{path\}\}/g, context.path || '');
-        command = command.replace(/\{\{tool\}\}/g, context.tool || '');
-        command = command.replace(/\{\{command\}\}/g, context.command || '');
+        // Safely substitute placeholders in command
+        const values = {
+          path: context.path || '',
+          tool: context.tool || '',
+          command: context.command || ''
+        };
+
+        const { command, safe, errors } = shellEscape.safeSubstitute(hook.command, values);
+
+        if (!safe || errors.length > 0) {
+          resolve({
+            success: false,
+            message: `Unsafe command template: ${errors.join(', ')}`,
+            output: null
+          });
+          return;
+        }
 
         const output = execSync(command, {
           encoding: 'utf-8',
@@ -443,18 +489,21 @@ class HooksBridge {
   }
 
   /**
-   * Log message
+   * Log message using logger utility
    */
   log(level, message) {
     if (this.silent && level !== 'error') return;
 
-    const prefix = {
-      info: 'INFO',
-      warn: 'WARN',
-      error: 'ERROR'
-    }[level] || 'LOG';
-
-    console.error(`[Grimoires:${prefix}] ${message}`);
+    if (logger && logger[level]) {
+      logger[level](message);
+    } else {
+      const prefix = {
+        info: 'INFO',
+        warn: 'WARN',
+        error: 'ERROR'
+      }[level] || 'LOG';
+      console.error(`[Grimoires:${prefix}] ${message}`);
+    }
   }
 }
 

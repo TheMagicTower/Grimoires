@@ -70,9 +70,13 @@ async function buildContext(options = {}) {
 
 /**
  * Read context from stdin (JSON format)
+ * @param {Object} options - Options for reading stdin
+ * @param {number} options.timeout - Timeout in ms (default: 5000)
  * @returns {Promise<Object|null>}
  */
-async function readStdinContext() {
+async function readStdinContext(options = {}) {
+  const timeoutMs = options.timeout || 5000;
+
   return new Promise((resolve) => {
     // Check if stdin is a TTY (interactive terminal)
     if (process.stdin.isTTY) {
@@ -81,9 +85,29 @@ async function readStdinContext() {
     }
 
     let data = '';
-    const timeout = setTimeout(() => {
-      resolve(null);
-    }, 100); // Short timeout for non-blocking
+    let resolved = false;
+
+    const safeResolve = (value) => {
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timeoutId);
+        resolve(value);
+      }
+    };
+
+    const timeoutId = setTimeout(() => {
+      // If we have some data, try to parse it before timing out
+      if (data.trim()) {
+        try {
+          const parsed = JSON.parse(data);
+          safeResolve(parsed);
+          return;
+        } catch {
+          // Fall through to null
+        }
+      }
+      safeResolve(null);
+    }, timeoutMs);
 
     process.stdin.setEncoding('utf8');
     process.stdin.on('data', (chunk) => {
@@ -91,18 +115,16 @@ async function readStdinContext() {
     });
 
     process.stdin.on('end', () => {
-      clearTimeout(timeout);
       try {
         const parsed = JSON.parse(data);
-        resolve(parsed);
+        safeResolve(parsed);
       } catch {
-        resolve(null);
+        safeResolve(null);
       }
     });
 
     process.stdin.on('error', () => {
-      clearTimeout(timeout);
-      resolve(null);
+      safeResolve(null);
     });
 
     // Resume stdin to start receiving data
