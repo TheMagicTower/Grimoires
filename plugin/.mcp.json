@@ -4,6 +4,11 @@
       "command": "codex",
       "args": ["mcp-server"],
       "description": "OpenAI Codex for code generation - requires: codex login"
+    },
+    "gemini": {
+      "command": "npx",
+      "args": ["-y", "gemini-mcp-tool"],
+      "description": "Google Gemini for code analysis - uses Gemini CLI auth"
     }
   }
 }

@@ -8,7 +8,7 @@
       },
       {
         "type": "prompt",
-        "prompt": "위 Grimoires 상태 파일을 확인하세요. activeFamiliar가 있으면 해당 도구를 반드시 사용해야 합니다:\n- codex: MCP 도구 우선, 없으면 `codex exec`\n- gemini: `gemini \"...\"`\n- gh: `gh ...`\n\n직접 처리하지 말고 해당 도구를 호출하세요."
+        "prompt": "위 Grimoires 상태 파일을 확인하세요. activeFamiliar가 있으면 해당 MCP 도구를 반드시 사용해야 합니다:\n- codex: Codex MCP 도구 우선, 없으면 `codex exec`\n- gemini: Gemini MCP 도구 우선, 없으면 `gemini`\n- gh: `gh ...`\n\n직접 처리하지 말고 해당 도구를 호출하세요."
       }
     ],
     "PostToolUse": [
@@ -22,11 +22,11 @@
         ]
       },
       {
-        "matcher": "toolName matches 'codex'",
+        "matcher": "toolName matches 'codex|gemini'",
         "hooks": [
           {
             "type": "prompt",
-            "prompt": "Codex MCP 호출 완료. 작업이 끝나면 상태 파일을 정리하세요."
+            "prompt": "MCP 호출 완료. 작업이 끝나면 상태 파일을 정리하세요."
           }
         ]
       }
