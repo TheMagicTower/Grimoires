@@ -5,7 +5,7 @@ set -euo pipefail
 # Grimoires Installer for Unix/Linux/macOS
 # ============================================================
 
-VERSION="0.3.0"
+VERSION="0.3.1"
 INSTALL_DIR="${GRIMOIRES_HOME:-$HOME/.grimoires}"
 REPO_URL="https://github.com/bluelucifer/Grimoires"
 RELEASE_URL="$REPO_URL/releases/latest/download"
@@ -134,6 +134,8 @@ download_grimoires() {
             cp -r "$INSTALL_DIR/repo/core" "$INSTALL_DIR/" 2>/dev/null || true
             cp -r "$INSTALL_DIR/repo/templates" "$INSTALL_DIR/" 2>/dev/null || true
             cp -r "$INSTALL_DIR/repo/mcp" "$INSTALL_DIR/" 2>/dev/null || true
+            cp -r "$INSTALL_DIR/repo/bin" "$INSTALL_DIR/" 2>/dev/null || true
+            cp -r "$INSTALL_DIR/repo/scripts" "$INSTALL_DIR/" 2>/dev/null || true
             # Fallback: copy old structure if new doesn't exist
             if [ ! -d "$INSTALL_DIR/core" ]; then
                 mkdir -p "$INSTALL_DIR/core"
@@ -268,6 +270,77 @@ case "${1:-help}" in
             echo "✓ Claude hooks configured"
         else
             echo "⚠ Claude hooks not configured (run: grimoires hooks setup)"
+        fi
+
+        # Check MCP servers availability
+        echo ""
+        echo "MCP Servers:"
+
+        # Serena
+        if npx -y serena-mcp --version &> /dev/null 2>&1; then
+            echo "✓ Serena MCP available"
+        else
+            echo "⚠ Serena MCP not available (npx -y serena-mcp)"
+        fi
+
+        # Sequential Thinking
+        if npx -y @modelcontextprotocol/server-sequential-thinking --version &> /dev/null 2>&1; then
+            echo "✓ Sequential Thinking MCP available"
+        else
+            echo "⚠ Sequential Thinking MCP not available"
+        fi
+
+        # FixHive
+        if command -v fixhive-mcp &> /dev/null; then
+            echo "✓ FixHive MCP available"
+        else
+            echo "⚠ FixHive MCP not available (install fixhive-mcp)"
+        fi
+
+        # Check Familiar MCPs
+        echo ""
+        echo "Familiar MCPs:"
+
+        # Codex
+        if command -v codex-mcp-server &> /dev/null || npx -y codex-mcp-server --version &> /dev/null 2>&1; then
+            echo "✓ Codex MCP available"
+        else
+            echo "⚠ Codex MCP not available (requires OPENAI_API_KEY)"
+        fi
+
+        # Gemini
+        if command -v gemini-mcp &> /dev/null || [ -n "$GOOGLE_API_KEY" ]; then
+            echo "✓ Gemini MCP available"
+        else
+            echo "⚠ Gemini MCP not available (requires GOOGLE_API_KEY)"
+        fi
+
+        # Stitch
+        if command -v stitch-mcp &> /dev/null; then
+            echo "✓ Stitch MCP available"
+        else
+            echo "⚠ Stitch MCP not available (optional, for UI design)"
+        fi
+
+        # Check API Keys
+        echo ""
+        echo "API Keys:"
+        if [ -n "$OPENAI_API_KEY" ]; then
+            echo "✓ OPENAI_API_KEY set"
+        else
+            echo "⚠ OPENAI_API_KEY not set (needed for Codex)"
+        fi
+
+        if [ -n "$GOOGLE_API_KEY" ]; then
+            echo "✓ GOOGLE_API_KEY set"
+        else
+            echo "⚠ GOOGLE_API_KEY not set (needed for Gemini)"
+        fi
+
+        if [ -n "$ANTHROPIC_API_KEY" ]; then
+            echo "✓ ANTHROPIC_API_KEY set"
+        else
+            echo "⚠ ANTHROPIC_API_KEY not set (needed for Claude)"
         fi
 
         echo ""
@@ -416,7 +489,7 @@ create_global_config() {
 # Grimoires Global Configuration
 # https://github.com/bluelucifer/Grimoires
 
-version: "0.3.0"
+version: "0.3.1"
 
 # API Keys (set via environment variables or here)
 # Note: Environment variables take precedence
@@ -588,6 +661,30 @@ print_success() {
     echo ""
 }
 
+setup_hooks() {
+    echo ""
+    echo -e "${BLUE}Setting up Claude Code hooks...${NC}"
+
+    # Check if running in CI or non-interactive mode
+    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ] || [ ! -t 0 ]; then
+        info "Non-interactive mode: skipping hooks setup"
+        info "Run manually later: grimoires hooks setup"
+        return
+    fi
+
+    if [ -f "$INSTALL_DIR/scripts/setup-hooks.sh" ]; then
+        read -p "Setup Claude Code hooks integration? [Y/n] " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+            bash "$INSTALL_DIR/scripts/setup-hooks.sh" install
+        else
+            info "Skipped hooks setup. Run later: grimoires hooks setup"
+        fi
+    else
+        warning "Hooks setup script not found"
+    fi
+}
+
 # Main
 main() {
     print_banner
@@ -596,6 +693,7 @@ main() {
     setup_path
     create_global_config
     copy_scripts
+    setup_hooks
     print_success
 }
 
