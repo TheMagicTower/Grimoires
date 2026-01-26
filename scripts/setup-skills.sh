@@ -61,10 +61,10 @@ create_plugin_manifest() {
   "description": "Grimoires - Multi-AI Agent Orchestration spells for Claude Code",
   "version": "0.3.5",
   "author": {
-    "name": "bluelucifer",
-    "url": "https://github.com/bluelucifer/Grimoires"
+    "name": "TheMagicTower",
+    "url": "https://github.com/TheMagicTower/Grimoires"
   },
-  "repository": "https://github.com/bluelucifer/Grimoires",
+  "repository": "https://github.com/TheMagicTower/Grimoires",
   "license": "MIT"
 }
 EOF

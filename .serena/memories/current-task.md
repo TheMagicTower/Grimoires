@@ -4,7 +4,7 @@
 
 **Version**: 0.2.0
 **Completed**: 2026-01-25
-**PR**: https://github.com/bluelucifer/Grimoires/pull/1
+**PR**: https://github.com/TheMagicTower/Grimoires/pull/1
 
 ---
 

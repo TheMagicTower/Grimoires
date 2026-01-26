@@ -22,7 +22,7 @@ Grimoires를 빠르게 시작하기 위한 단계별 가이드입니다.
 ### Step 1: Clone Repository
 
 ```bash
-git clone https://github.com/bluelucifer/Grimoires.git
+git clone https://github.com/TheMagicTower/Grimoires.git
 cd Grimoires
 ```
 
@@ -300,8 +300,8 @@ Familiar 추가나 워크플로우 커스터마이징은 다음 파일들을 참
 
 ## 10. Getting Help
 
-- **Issues**: https://github.com/bluelucifer/Grimoires/issues
-- **Discussions**: https://github.com/bluelucifer/Grimoires/discussions
+- **Issues**: https://github.com/TheMagicTower/Grimoires/issues
+- **Discussions**: https://github.com/TheMagicTower/Grimoires/discussions
 
 ---
 

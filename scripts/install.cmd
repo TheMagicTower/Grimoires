@@ -11,7 +11,7 @@ if defined GRIMOIRES_HOME (
 ) else (
     set INSTALL_DIR=%USERPROFILE%\.grimoires
 )
-set REPO_URL=https://github.com/bluelucifer/Grimoires
+set REPO_URL=https://github.com/TheMagicTower/Grimoires
 set RELEASE_URL=%REPO_URL%/releases/latest/download
 
 echo.
@@ -189,12 +189,12 @@ echo goto :eof
 echo.
 echo :update
 echo echo Updating Grimoires...
-echo powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 ^| iex"
+echo powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.ps1 ^| iex"
 echo goto :eof
 echo.
 echo :uninstall
 echo echo Running uninstaller...
-echo powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/uninstall.ps1 ^| iex"
+echo powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/uninstall.ps1 ^| iex"
 echo goto :eof
 echo.
 echo :doctor
@@ -228,7 +228,7 @@ echo echo     uninstall   Remove Grimoires from system
 echo echo     doctor      Check installation health
 echo echo     help        Show this help message
 echo echo.
-echo echo For more information: https://github.com/bluelucifer/Grimoires
+echo echo For more information: https://github.com/TheMagicTower/Grimoires
 echo goto :eof
 ) > "%BIN_DIR%\grimoires.cmd"
 
@@ -252,7 +252,7 @@ echo Creating global configuration...
 if not exist "%INSTALL_DIR%\config.yaml" (
     (
     echo # Grimoires Global Configuration
-    echo # https://github.com/bluelucifer/Grimoires
+    echo # https://github.com/TheMagicTower/Grimoires
     echo.
     echo version: "%VERSION%"
     echo.
@@ -311,7 +311,7 @@ echo     grimoires update    - Update Grimoires
 echo     grimoires uninstall - Remove Grimoires
 echo.
 echo   Documentation:
-echo     https://github.com/bluelucifer/Grimoires
+echo     https://github.com/TheMagicTower/Grimoires
 echo.
 
 endlocal

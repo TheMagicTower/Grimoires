@@ -255,17 +255,17 @@ project/                         # Project-local
 
 **Unix/Linux/macOS:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
 ```
 
 **Windows PowerShell:**
 ```powershell
-irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.ps1 | iex
 ```
 
 **Windows CMD:**
 ```batch
-curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
+curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
 ---
@@ -396,4 +396,4 @@ First public release of Grimoires - Multi-AI Agent Orchestration for Claude Code
 
 ---
 
-*For detailed release notes, see the [GitHub Releases](https://github.com/bluelucifer/Grimoires/releases) page.*
+*For detailed release notes, see the [GitHub Releases](https://github.com/TheMagicTower/Grimoires/releases) page.*

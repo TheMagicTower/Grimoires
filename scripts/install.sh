@@ -7,7 +7,7 @@ set -euo pipefail
 
 VERSION="0.3.1"
 INSTALL_DIR="${GRIMOIRES_HOME:-$HOME/.grimoires}"
-REPO_URL="https://github.com/bluelucifer/Grimoires"
+REPO_URL="https://github.com/TheMagicTower/Grimoires"
 RELEASE_URL="$REPO_URL/releases/latest/download"
 
 # Colors
@@ -200,7 +200,7 @@ Note: Most Grimoires commands are used within Claude Code:
     /cast:fix       - Fix errors
     /cast:parallel  - Parallel execution
 
-For more information: https://github.com/bluelucifer/Grimoires
+For more information: https://github.com/TheMagicTower/Grimoires
 EOF
 }
 
@@ -214,14 +214,14 @@ case "${1:-help}" in
         ;;
     update)
         echo "Updating Grimoires..."
-        curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+        curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
         ;;
     uninstall)
         echo "Running uninstaller..."
         if [ -f "$GRIMOIRES_HOME/scripts/uninstall.sh" ]; then
             bash "$GRIMOIRES_HOME/scripts/uninstall.sh"
         else
-            curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/uninstall.sh | bash
+            curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/uninstall.sh | bash
         fi
         ;;
     doctor)
@@ -495,7 +495,7 @@ create_global_config() {
     if [ ! -f "$INSTALL_DIR/config.yaml" ]; then
         cat > "$INSTALL_DIR/config.yaml" << 'CONFIG'
 # Grimoires Global Configuration
-# https://github.com/bluelucifer/Grimoires
+# https://github.com/TheMagicTower/Grimoires
 
 version: "0.3.1"
 
@@ -666,7 +666,7 @@ print_success() {
     echo "    grimoires uninstall - Remove Grimoires"
     echo ""
     echo -e "  ${CYAN}Documentation:${NC}"
-    echo "    https://github.com/bluelucifer/Grimoires"
+    echo "    https://github.com/TheMagicTower/Grimoires"
     echo ""
 }
 

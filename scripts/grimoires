@@ -46,7 +46,7 @@ ${CYAN}Note:${NC} Most Grimoires commands are used within Claude Code:
     /cast-parallel  - Parallel execution
 
 ${CYAN}Documentation:${NC}
-    https://github.com/bluelucifer/Grimoires
+    https://github.com/TheMagicTower/Grimoires
 
 EOF
 }
@@ -65,9 +65,9 @@ run_update() {
 
     # Check for curl
     if command -v curl &> /dev/null; then
-        curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+        curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
     elif command -v wget &> /dev/null; then
-        wget -qO- https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+        wget -qO- https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
     else
         echo -e "${RED}Error: curl or wget required for update${NC}"
         exit 1
@@ -82,9 +82,9 @@ run_uninstall() {
     if [ -f "$GRIMOIRES_HOME/scripts/uninstall.sh" ]; then
         bash "$GRIMOIRES_HOME/scripts/uninstall.sh"
     elif command -v curl &> /dev/null; then
-        curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/uninstall.sh | bash
+        curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/uninstall.sh | bash
     elif command -v wget &> /dev/null; then
-        wget -qO- https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/uninstall.sh | bash
+        wget -qO- https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/uninstall.sh | bash
     else
         echo -e "${RED}Error: curl or wget required for uninstall${NC}"
         exit 1

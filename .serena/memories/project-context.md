@@ -71,10 +71,10 @@ Grimoires/
 
 ```bash
 # Unix/Linux/macOS
-curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
 
 # Windows PowerShell
-irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.ps1 | iex
 ```
 
 ---

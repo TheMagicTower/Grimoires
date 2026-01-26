@@ -36,17 +36,17 @@ Grimoires는 Claude Code를 중심으로 여러 AI 에이전트(Codex, Gemini, S
 
 **Unix/Linux/macOS:**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
 ```
 
 **Windows PowerShell:**
 ```powershell
-irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.ps1 | iex
 ```
 
 **Windows CMD:**
 ```batch
-curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
+curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
 ### Prerequisites
@@ -340,7 +340,7 @@ export GOOGLE_API_KEY="AI..."
 문제 발생 시 재설치:
 ```bash
 grimoires uninstall
-curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
 ```
 
 ---
@@ -433,7 +433,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ## Links
 
-- **Repository**: https://github.com/bluelucifer/Grimoires
+- **Repository**: https://github.com/TheMagicTower/Grimoires
 - **Documentation**: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **Quick Start**: [docs/QUICKSTART.md](docs/QUICKSTART.md)
 

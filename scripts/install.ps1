@@ -6,7 +6,7 @@
 $ErrorActionPreference = "Stop"
 $Version = "0.2.0"
 $InstallDir = if ($env:GRIMOIRES_HOME) { $env:GRIMOIRES_HOME } else { "$env:USERPROFILE\.grimoires" }
-$RepoUrl = "https://github.com/bluelucifer/Grimoires"
+$RepoUrl = "https://github.com/TheMagicTower/Grimoires"
 $ReleaseUrl = "$RepoUrl/releases/latest/download"
 
 function Write-Banner {
@@ -197,12 +197,12 @@ goto :eof
 
 :update
 echo Updating Grimoires...
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex"
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.ps1 | iex"
 goto :eof
 
 :uninstall
 echo Running uninstaller...
-powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/uninstall.ps1 | iex"
+powershell -ExecutionPolicy Bypass -Command "irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/uninstall.ps1 | iex"
 goto :eof
 
 :doctor
@@ -255,7 +255,7 @@ echo     /cast:summon    - Initialize project
 echo     /cast:dev       - Start development workflow
 echo     /cast:review    - Code review
 echo.
-echo For more information: https://github.com/bluelucifer/Grimoires
+echo For more information: https://github.com/TheMagicTower/Grimoires
 goto :eof
 "@
     Set-Content -Path "$binDir\grimoires.cmd" -Value $cliContent
@@ -285,7 +285,7 @@ function New-GlobalConfig {
     if (-not (Test-Path $configPath)) {
         $config = @"
 # Grimoires Global Configuration
-# https://github.com/bluelucifer/Grimoires
+# https://github.com/TheMagicTower/Grimoires
 
 version: "$Version"
 
@@ -341,7 +341,7 @@ function Copy-Scripts {
     New-Item -ItemType Directory -Force -Path $scriptsDir | Out-Null
 
     # Copy this install script for offline access
-    $installUrl = "https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1"
+    $installUrl = "https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.ps1"
     try {
         Invoke-WebRequest -Uri $installUrl -OutFile "$scriptsDir\install.ps1" -UseBasicParsing
     }
@@ -380,7 +380,7 @@ function Write-Success-Banner {
     Write-Host "    grimoires uninstall - Remove Grimoires"
     Write-Host ""
     Write-Host "  Documentation:" -ForegroundColor Cyan
-    Write-Host "    https://github.com/bluelucifer/Grimoires"
+    Write-Host "    https://github.com/TheMagicTower/Grimoires"
     Write-Host ""
 }
 

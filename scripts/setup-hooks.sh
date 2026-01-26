@@ -34,7 +34,7 @@ print_banner() {
 check_grimoires() {
     if [ ! -d "$GRIMOIRES_HOME" ]; then
         error "Grimoires not installed at $GRIMOIRES_HOME"
-        echo "Run the installer first: curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash"
+        echo "Run the installer first: curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash"
         exit 1
     fi
 

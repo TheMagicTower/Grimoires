@@ -17,7 +17,7 @@ Grimoires는 Claude Code 기반의 멀티 AI 에이전트 오케스트레이션 
 
 현재 상태:
 - README.md와 ARCHITECTURE.md 작성 완료
-- GitHub: https://github.com/bluelucifer/Grimoires
+- GitHub: https://github.com/TheMagicTower/Grimoires
 
 다음 작업을 진행한다: [작업 내용]
 ```

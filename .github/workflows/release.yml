@@ -43,22 +43,22 @@ jobs:
 
             **Unix/Linux/macOS:**
             ```bash
-            curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+            curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
             ```
 
             **Windows PowerShell:**
             ```powershell
-            irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex
+            irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.ps1 | iex
             ```
 
             **Windows CMD:**
             ```batch
-            curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
+            curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.cmd -o install.cmd && install.cmd && del install.cmd
             ```
 
             ### What's New
 
-            See [CHANGELOG.md](https://github.com/bluelucifer/Grimoires/blob/main/CHANGELOG.md) for details.
+            See [CHANGELOG.md](https://github.com/TheMagicTower/Grimoires/blob/main/CHANGELOG.md) for details.
 
             ### Quick Start
 
@@ -69,8 +69,8 @@ jobs:
 
             ### Documentation
 
-            - [Quick Start Guide](https://github.com/bluelucifer/Grimoires/blob/main/docs/QUICKSTART.md)
-            - [Architecture](https://github.com/bluelucifer/Grimoires/blob/main/docs/ARCHITECTURE.md)
+            - [Quick Start Guide](https://github.com/TheMagicTower/Grimoires/blob/main/docs/QUICKSTART.md)
+            - [Architecture](https://github.com/TheMagicTower/Grimoires/blob/main/docs/ARCHITECTURE.md)
 
           files: |
             dist/grimoires-core.tar.gz
@@ -105,7 +105,7 @@ jobs:
       - name: Test Unix installation
         if: runner.os != 'Windows'
         run: |
-          curl -fsSL https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.sh | bash
           # Set PATH directly instead of sourcing rc files (more reliable in CI)
           export GRIMOIRES_HOME="$HOME/.grimoires"
           export PATH="$GRIMOIRES_HOME/bin:$PATH"
@@ -116,7 +116,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          irm https://raw.githubusercontent.com/bluelucifer/Grimoires/main/scripts/install.ps1 | iex
+          irm https://raw.githubusercontent.com/TheMagicTower/Grimoires/main/scripts/install.ps1 | iex
           # Set PATH directly for current session
           $env:GRIMOIRES_HOME = "$env:USERPROFILE\.grimoires"
           $env:Path = "$env:GRIMOIRES_HOME\bin;$env:Path"
