@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "codex": {
+      "command": "codex",
+      "args": ["mcp-server"],
+      "description": "OpenAI Codex for code generation - requires: codex login"
+    },
+    "gemini-mcp": {
+      "command": "npx",
+      "args": ["-y", "gemini-mcp"],
+      "env": {
+        "GOOGLE_API_KEY": "${GOOGLE_API_KEY}"
+      },
+      "description": "Google Gemini for code analysis - requires: GOOGLE_API_KEY env var"
+    }
+  }
+}
