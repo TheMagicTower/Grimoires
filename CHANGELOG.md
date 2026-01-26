@@ -7,6 +7,157 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-01-26
+
+### everything-claude-code Integration Release
+
+This release integrates key features from everything-claude-code to significantly increase feature completeness from ~35-40% to ~85%+.
+
+### Added
+
+#### Hooks System (Phase 1)
+- **Event-driven automation** with 6 hook types:
+  - `PreToolUse` - Validate, block, or confirm before tool execution
+  - `PostToolUse` - Auto-format, lint, typecheck after changes
+  - `SessionStart` - Load context and detect project type
+  - `SessionEnd` - Save state and cleanup
+  - `PreCompact` - Backup important state before context compaction
+  - `Stop` - Verify task completion
+
+- **JavaScript handlers** for custom logic:
+  - `session-start.js` - Serena memory loading, project detection
+  - `session-end.js` - State saving, pattern learning
+  - `pre-compact.js` - Critical state backup
+  - `pre-tool-use.js` - Security checks, destructive operation blocking
+  - `post-tool-use.js` - Auto-formatting, linting, testing
+  - `stop.js` - Completion verification, recommendations
+
+- **Security features**:
+  - Block force push, hard reset, dangerous rm operations
+  - Detect hardcoded secrets and API keys
+  - SQL injection pattern detection
+  - Confirmation for sensitive operations
+
+#### Extended Rules (Phase 2)
+- **security.md** - Comprehensive security rules:
+  - Secret management (hardcoded secrets, env validation)
+  - Input validation (SQL injection, XSS, path traversal)
+  - Authentication best practices (JWT, password hashing)
+  - Data protection (sensitive logging, HTTPS, CORS)
+
+- **testing.md** - Testing standards:
+  - Coverage thresholds (80% line, 70% branch)
+  - TDD workflow (RED → GREEN → REFACTOR)
+  - Test categories (Unit, Integration, E2E)
+  - Test quality rules (independence, AAA pattern)
+
+- **git-workflow.md** - Git best practices:
+  - Branch naming conventions
+  - Conventional Commits format
+  - PR guidelines and templates
+  - Merge strategies
+
+- **performance.md** - Performance optimization:
+  - Frontend (bundle size, render performance, virtualization)
+  - Backend (N+1 queries, caching, connection pooling)
+  - Algorithm complexity guidelines
+  - Async patterns (parallel execution, debounce/throttle)
+
+- **coding-style.md** - Code style guidelines:
+  - File organization and imports
+  - Naming conventions
+  - Error handling patterns
+  - TypeScript best practices
+
+#### TDD/Testing (Phase 3)
+- **TDD Guide Familiar** - Testing specialist:
+  - Requirement to test case conversion
+  - Coverage analysis
+  - Test quality verification
+  - TDD cycle management
+
+- **New Spells**:
+  - `/cast:tdd` - TDD workflow (RED-GREEN-REFACTOR)
+  - `/cast:test-coverage` - Coverage analysis and recommendations
+  - `/cast:e2e` - E2E test execution (Playwright/Cypress)
+
+#### MCP Extensions (Phase 4)
+- **github.json** - GitHub MCP integration:
+  - Repository operations
+  - Issue management
+  - Pull request workflows
+  - GitHub Actions integration
+
+- **memory.json** - Memory MCP for persistent context:
+  - Entity storage and retrieval
+  - Relationship management
+  - Cross-session context preservation
+
+- **New Spells**:
+  - `/cast:plan` - Sequential Thinking-based planning
+  - `/cast:refactor` - Safe refactoring workflow
+  - `/cast:checkpoint` - State snapshot save/restore
+
+### Changed
+
+- **mcp/archmage.json** - Added hooks configuration reference
+- **templates/presets/*.yaml** - Added new rules and spells to all presets
+- **core/spells/README.md** - Documented 6 new spells
+- **README.md** - Updated for v0.3.0 features
+
+### File Summary
+
+| Category | New Files | Modified Files |
+|----------|-----------|----------------|
+| Hooks | 8 | 1 |
+| Rules | 5 | 0 |
+| Familiars | 1 | 0 |
+| Spells | 6 | 1 |
+| MCP | 2 | 1 |
+| Docs/Config | 2 | 3 |
+| **Total** | **24** | **6** |
+
+### New Directory Structure
+
+```
+core/
+├── hooks/
+│   ├── hooks.json           # Hook configuration
+│   └── handlers/            # JavaScript handlers
+│       ├── session-start.js
+│       ├── session-end.js
+│       ├── pre-compact.js
+│       ├── pre-tool-use.js
+│       ├── post-tool-use.js
+│       └── stop.js
+├── rules/
+│   ├── design-principles.md # (existing)
+│   ├── security.md          # NEW
+│   ├── testing.md           # NEW
+│   ├── git-workflow.md      # NEW
+│   ├── performance.md       # NEW
+│   └── coding-style.md      # NEW
+├── familiars/
+│   ├── codex.tome.md        # (existing)
+│   └── tdd-guide.tome.md    # NEW
+└── spells/
+    ├── cast-tdd.md          # NEW
+    ├── cast-test-coverage.md# NEW
+    ├── cast-e2e.md          # NEW
+    ├── cast-plan.md         # NEW
+    ├── cast-refactor.md     # NEW
+    └── cast-checkpoint.md   # NEW
+
+mcp/
+├── github.json              # NEW
+└── memory.json              # NEW
+
+docs/
+└── HOOKS.md                 # NEW
+```
+
+---
+
 ## [0.2.0] - 2026-01-25
 
 ### Installation & Deployment Release
@@ -221,8 +372,7 @@ First public release of Grimoires - Multi-AI Agent Orchestration for Claude Code
 
 ## [Unreleased]
 
-### Planned for 0.3.0
-- [ ] Testing suite for workflows
+### Planned for 0.4.0
 - [ ] Plugin system for custom Familiars
 - [ ] Web dashboard for monitoring
 - [ ] Integration with more AI providers
@@ -240,6 +390,7 @@ First public release of Grimoires - Multi-AI Agent Orchestration for Claude Code
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| 0.3.0 | 2026-01-26 | Hooks system, TDD workflow, extended rules, 6 new spells |
 | 0.2.0 | 2026-01-25 | Cross-platform installation, global deployment, auto-init |
 | 0.1.0 | 2026-01-25 | Initial release with 4 Familiars, 7 spells, 16 design principles |
 
