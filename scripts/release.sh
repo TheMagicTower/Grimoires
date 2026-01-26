@@ -51,6 +51,7 @@ mkdir -p "$STAGING_DIR/core"
 mkdir -p "$STAGING_DIR/templates"
 mkdir -p "$STAGING_DIR/mcp"
 mkdir -p "$STAGING_DIR/scripts"
+mkdir -p "$STAGING_DIR/bin"
 
 # Copy core files - check for new structure first, fallback to old
 if [ -d "$PROJECT_ROOT/core" ]; then
@@ -81,6 +82,19 @@ fi
 cp "$PROJECT_ROOT/scripts/install.sh" "$STAGING_DIR/scripts/" 2>/dev/null || true
 cp "$PROJECT_ROOT/scripts/uninstall.sh" "$STAGING_DIR/scripts/" 2>/dev/null || true
 cp "$PROJECT_ROOT/scripts/grimoires" "$STAGING_DIR/scripts/" 2>/dev/null || true
+cp "$PROJECT_ROOT/scripts/setup-hooks.sh" "$STAGING_DIR/scripts/" 2>/dev/null || true
+cp "$PROJECT_ROOT/scripts/setup-skills.sh" "$STAGING_DIR/scripts/" 2>/dev/null || true
+
+# Copy bin directory (grimoires-hooks CLI)
+if [ -d "$PROJECT_ROOT/bin" ]; then
+    cp -r "$PROJECT_ROOT/bin/"* "$STAGING_DIR/bin/" 2>/dev/null || true
+fi
+
+# Copy compiled runtime for grimoires-hooks
+if [ -d "$PROJECT_ROOT/core/runtime" ]; then
+    mkdir -p "$STAGING_DIR/core/runtime"
+    cp -r "$PROJECT_ROOT/core/runtime/"* "$STAGING_DIR/core/runtime/" 2>/dev/null || true
+fi
 
 # Copy config template
 if [ -f "$PROJECT_ROOT/config.yaml" ]; then
@@ -210,6 +224,22 @@ if [ -f "$VERIFY_DIR/config.yaml" ]; then
 else
     echo -e "${RED}FAILED${NC}"
     ((verify_errors++))
+fi
+
+# Test 3b: Verify bin/ directory exists
+echo -n "  Checking bin/ directory... "
+if [ -d "$VERIFY_DIR/bin" ] && [ "$(ls -A "$VERIFY_DIR/bin" 2>/dev/null)" ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${YELLOW}WARN (optional)${NC}"
+fi
+
+# Test 3c: Verify scripts/ directory has setup scripts
+echo -n "  Checking setup scripts... "
+if [ -f "$VERIFY_DIR/scripts/setup-hooks.sh" ] && [ -f "$VERIFY_DIR/scripts/setup-skills.sh" ]; then
+    echo -e "${GREEN}OK${NC}"
+else
+    echo -e "${YELLOW}WARN (optional)${NC}"
 fi
 
 # Test 4: Verify version file

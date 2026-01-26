@@ -281,54 +281,14 @@ case "${1:-help}" in
             echo "⚠ Claude skills not configured (run: grimoires skills setup)"
         fi
 
-        # Check MCP servers availability
+        # Check MCP configuration files
         echo ""
-        echo "MCP Servers:"
-
-        # Serena
-        if npx -y serena-mcp --version &> /dev/null 2>&1; then
-            echo "✓ Serena MCP available"
+        echo "MCP Configuration:"
+        if [ -d "$GRIMOIRES_HOME/mcp" ]; then
+            mcp_count=$(ls "$GRIMOIRES_HOME/mcp/"*.json 2>/dev/null | wc -l)
+            echo "✓ MCP configs available ($mcp_count files)"
         else
-            echo "⚠ Serena MCP not available (npx -y serena-mcp)"
-        fi
-
-        # Sequential Thinking
-        if npx -y @modelcontextprotocol/server-sequential-thinking --version &> /dev/null 2>&1; then
-            echo "✓ Sequential Thinking MCP available"
-        else
-            echo "⚠ Sequential Thinking MCP not available"
-        fi
-
-        # FixHive
-        if command -v fixhive-mcp &> /dev/null; then
-            echo "✓ FixHive MCP available"
-        else
-            echo "⚠ FixHive MCP not available (install fixhive-mcp)"
-        fi
-
-        # Check Familiar MCPs
-        echo ""
-        echo "Familiar MCPs:"
-
-        # Codex
-        if command -v codex-mcp-server &> /dev/null || npx -y codex-mcp-server --version &> /dev/null 2>&1; then
-            echo "✓ Codex MCP available"
-        else
-            echo "⚠ Codex MCP not available (requires OPENAI_API_KEY)"
-        fi
-
-        # Gemini
-        if command -v gemini-mcp &> /dev/null || [ -n "$GOOGLE_API_KEY" ]; then
-            echo "✓ Gemini MCP available"
-        else
-            echo "⚠ Gemini MCP not available (requires GOOGLE_API_KEY)"
-        fi
-
-        # Stitch
-        if command -v stitch-mcp &> /dev/null; then
-            echo "✓ Stitch MCP available"
-        else
-            echo "⚠ Stitch MCP not available (optional, for UI design)"
+            echo "⚠ MCP configs not found"
         fi
 
         # Check API Keys
