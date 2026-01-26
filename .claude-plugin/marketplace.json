@@ -14,7 +14,7 @@
       "name": "cast",
       "description": "Grimoires spells for AI agent orchestration workflows (/cast:summon, /cast:dev, /cast:review, etc.)",
       "source": "./plugin",
-      "version": "0.3.6",
+      "version": "0.3.7",
       "author": {
         "name": "TheMagicTower"
       },
