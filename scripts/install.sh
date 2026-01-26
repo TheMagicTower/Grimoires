@@ -291,26 +291,24 @@ case "${1:-help}" in
             echo "⚠ MCP configs not found"
         fi
 
-        # Check API Keys
+        # Check API Keys (optional for Familiars)
         echo ""
-        echo "API Keys:"
+        echo "API Keys (optional - for Familiars):"
         if [ -n "$OPENAI_API_KEY" ]; then
-            echo "✓ OPENAI_API_KEY set"
+            echo "✓ OPENAI_API_KEY set (Codex Familiar)"
         else
-            echo "⚠ OPENAI_API_KEY not set (needed for Codex)"
+            echo "- OPENAI_API_KEY not set (optional: Codex Familiar)"
         fi
 
         if [ -n "$GOOGLE_API_KEY" ]; then
-            echo "✓ GOOGLE_API_KEY set"
+            echo "✓ GOOGLE_API_KEY set (Gemini Familiar)"
         else
-            echo "⚠ GOOGLE_API_KEY not set (needed for Gemini)"
+            echo "- GOOGLE_API_KEY not set (optional: Gemini Familiar)"
         fi
 
-        if [ -n "$ANTHROPIC_API_KEY" ]; then
-            echo "✓ ANTHROPIC_API_KEY set"
-        else
-            echo "⚠ ANTHROPIC_API_KEY not set (needed for Claude)"
-        fi
+        echo ""
+        echo "Note: Claude Code subscription users don't need API keys."
+        echo "      API keys are only needed for external AI Familiars."
 
         echo ""
         echo "Installation health check complete."
