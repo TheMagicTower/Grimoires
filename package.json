@@ -1,0 +1,47 @@
+{
+  "name": "grimoires",
+  "version": "0.3.1",
+  "description": "Claude Code integration toolkit with hooks, MCP servers, and project templates",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "bin": {
+    "grimoires-hooks": "./bin/grimoires-hooks"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "node tests/runtime.test.js",
+    "test:e2e": "node tests/e2e/hooks.test.js",
+    "test:all": "npm run test && npm run test:e2e",
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "claude",
+    "claude-code",
+    "hooks",
+    "mcp",
+    "ai",
+    "assistant"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "core",
+    "mcp",
+    "templates"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bluelucifer/Grimoires.git"
+  }
+}

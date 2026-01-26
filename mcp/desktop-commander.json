@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Desktop Commander MCP Configuration - Desktop Automation",
+  "version": "0.3.0",
+  "mcpServers": {
+    "desktop-commander": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-desktop-commander"],
+      "env": {},
+      "description": "Desktop automation, screenshots, and GUI interaction"
+    }
+  },
+  "tools": [
+    {
+      "name": "screenshot",
+      "description": "Capture screenshot of screen or window"
+    },
+    {
+      "name": "click",
+      "description": "Click at screen coordinates"
+    },
+    {
+      "name": "type_text",
+      "description": "Type text input"
+    },
+    {
+      "name": "read_screen",
+      "description": "Read text from screen region"
+    },
+    {
+      "name": "move_mouse",
+      "description": "Move mouse cursor"
+    }
+  ],
+  "use_cases": [
+    "UI testing automation",
+    "Visual verification",
+    "Demo generation",
+    "GUI application testing"
+  ],
+  "requirements": {
+    "env": [],
+    "optional": true,
+    "platform": ["darwin", "linux", "win32"],
+    "notes": "Requires desktop environment"
+  },
+  "security": {
+    "level": "high",
+    "requires_confirmation": true,
+    "warning": "This tool can control your desktop. Use with caution."
+  }
+}

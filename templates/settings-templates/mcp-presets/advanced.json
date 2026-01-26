@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Advanced MCP Preset - Extended capabilities for larger projects",
+  "version": "0.3.0",
+  "preset": "advanced",
+
+  "mcpServers": {
+    "serena": {
+      "command": "npx",
+      "args": ["-y", "serena-mcp"],
+      "description": "Memory and context management"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Structured reasoning and problem decomposition"
+    },
+    "codex": {
+      "command": "codex",
+      "args": ["--mcp-server"],
+      "env": {
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      },
+      "description": "OpenAI Codex for code generation"
+    },
+    "gemini": {
+      "command": "npx",
+      "args": ["-y", "gemini-mcp"],
+      "env": {
+        "GOOGLE_API_KEY": "${GOOGLE_API_KEY}"
+      },
+      "description": "Google Gemini for analysis and security review"
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      },
+      "description": "GitHub integration for PRs, issues, and repo management"
+    },
+    "memory": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "description": "Persistent memory across sessions"
+    }
+  },
+
+  "required_env": [
+    "OPENAI_API_KEY",
+    "GOOGLE_API_KEY",
+    "GITHUB_TOKEN"
+  ],
+
+  "recommended_for": [
+    "Medium to large projects",
+    "Team development",
+    "Production applications"
+  ]
+}

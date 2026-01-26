@@ -5,7 +5,7 @@ set -euo pipefail
 # Grimoires Installer for Unix/Linux/macOS
 # ============================================================
 
-VERSION="0.2.0"
+VERSION="0.3.0"
 INSTALL_DIR="${GRIMOIRES_HOME:-$HOME/.grimoires}"
 REPO_URL="https://github.com/bluelucifer/Grimoires"
 RELEASE_URL="$REPO_URL/releases/latest/download"
@@ -181,6 +181,8 @@ Commands:
     update      Update to latest version
     uninstall   Remove Grimoires from system
     doctor      Check installation health
+    hooks       Setup/manage Claude Code hooks
+    env         Check/manage environment variables
     help        Show this help message
 
 Project Commands (run in project directory):
@@ -254,6 +256,20 @@ case "${1:-help}" in
             echo "⚠ Claude Code CLI not found"
         fi
 
+        # Check hooks CLI
+        if [ -f "$GRIMOIRES_HOME/bin/grimoires-hooks" ]; then
+            echo "✓ Hooks CLI available"
+        else
+            echo "⚠ Hooks CLI not found"
+        fi
+
+        # Check Claude hooks integration
+        if [ -f "$HOME/.claude/hooks.json" ]; then
+            echo "✓ Claude hooks configured"
+        else
+            echo "⚠ Claude hooks not configured (run: grimoires hooks setup)"
+        fi
+
         echo ""
         echo "Installation health check complete."
         ;;
@@ -261,6 +277,84 @@ case "${1:-help}" in
         echo "To initialize Grimoires in a project, use Claude Code:"
         echo "  1. Open Claude Code in your project directory"
         echo "  2. Run: /cast:summon"
+        ;;
+    hooks)
+        shift 2>/dev/null || true
+        case "${1:-}" in
+            setup|install)
+                if [ -f "$GRIMOIRES_HOME/scripts/setup-hooks.sh" ]; then
+                    bash "$GRIMOIRES_HOME/scripts/setup-hooks.sh" install "${@:2}"
+                else
+                    echo "Hooks setup script not found. Please update Grimoires."
+                fi
+                ;;
+            uninstall|remove)
+                if [ -f "$GRIMOIRES_HOME/scripts/setup-hooks.sh" ]; then
+                    bash "$GRIMOIRES_HOME/scripts/setup-hooks.sh" uninstall
+                else
+                    rm -f "$HOME/.claude/hooks.json"
+                    echo "Hooks removed."
+                fi
+                ;;
+            verify|check)
+                if [ -f "$GRIMOIRES_HOME/scripts/setup-hooks.sh" ]; then
+                    bash "$GRIMOIRES_HOME/scripts/setup-hooks.sh" verify
+                fi
+                ;;
+            *)
+                echo "Grimoires Hooks Management"
+                echo ""
+                echo "Usage: grimoires hooks <command>"
+                echo ""
+                echo "Commands:"
+                echo "  setup     Install hooks integration with Claude Code"
+                echo "  uninstall Remove hooks integration"
+                echo "  verify    Verify hooks setup"
+                echo ""
+                echo "Examples:"
+                echo "  grimoires hooks setup"
+                echo "  grimoires hooks setup --simple"
+                echo "  grimoires hooks uninstall"
+                ;;
+        esac
+        ;;
+    env)
+        shift 2>/dev/null || true
+        case "${1:-}" in
+            check|validate)
+                if [ -f "$GRIMOIRES_HOME/core/utils/env-validator.js" ]; then
+                    node "$GRIMOIRES_HOME/core/utils/env-validator.js" "${@:2}"
+                else
+                    echo "Environment validator not found. Please update Grimoires."
+                fi
+                ;;
+            list)
+                if [ -f "$GRIMOIRES_HOME/core/utils/env-validator.js" ]; then
+                    node "$GRIMOIRES_HOME/core/utils/env-validator.js" --group full --strict
+                else
+                    echo "Environment validator not found."
+                fi
+                ;;
+            *)
+                echo "Grimoires Environment Management"
+                echo ""
+                echo "Usage: grimoires env <command>"
+                echo ""
+                echo "Commands:"
+                echo "  check     Validate environment variables"
+                echo "  list      List all environment variables and their status"
+                echo ""
+                echo "Options for 'check':"
+                echo "  --group <name>   Variable group (minimal, basic, full)"
+                echo "  --strict         Include optional variables"
+                echo "  --json           Output as JSON"
+                echo ""
+                echo "Examples:"
+                echo "  grimoires env check"
+                echo "  grimoires env check --group full --strict"
+                echo "  grimoires env list"
+                ;;
+        esac
         ;;
     help|-h|--help|*)
         show_help
@@ -322,7 +416,7 @@ create_global_config() {
 # Grimoires Global Configuration
 # https://github.com/bluelucifer/Grimoires
 
-version: "0.2.0"
+version: "0.3.0"
 
 # API Keys (set via environment variables or here)
 # Note: Environment variables take precedence

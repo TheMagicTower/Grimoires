@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Testing MCP Preset - Focused on test automation and E2E testing",
+  "version": "0.3.0",
+  "preset": "testing",
+
+  "mcpServers": {
+    "serena": {
+      "command": "npx",
+      "args": ["-y", "serena-mcp"],
+      "description": "Memory and context management"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Structured test planning"
+    },
+    "browser-use": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-browser-use"],
+      "env": {
+        "HEADLESS": "true"
+      },
+      "description": "Browser automation for E2E testing"
+    },
+    "desktop-commander": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/mcp-server-desktop-commander"],
+      "description": "Desktop automation for UI testing"
+    }
+  },
+
+  "recommended_for": [
+    "E2E testing projects",
+    "UI automation",
+    "Visual regression testing",
+    "QA workflows"
+  ],
+
+  "permissions": {
+    "additional": [
+      "Bash(npx playwright *)",
+      "Bash(npx cypress *)",
+      "Bash(npx jest *)",
+      "Bash(npx vitest *)"
+    ]
+  }
+}

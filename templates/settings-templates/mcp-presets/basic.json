@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Basic MCP Preset - Essential servers for Claude Code",
+  "version": "0.3.0",
+  "preset": "basic",
+
+  "mcpServers": {
+    "serena": {
+      "command": "npx",
+      "args": ["-y", "serena-mcp"],
+      "description": "Memory and context management"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Structured reasoning and problem decomposition"
+    }
+  },
+
+  "recommended_for": [
+    "Small projects",
+    "Quick prototypes",
+    "Minimal setup"
+  ]
+}

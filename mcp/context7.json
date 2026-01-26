@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Context7 MCP Configuration - Large Context Management",
+  "version": "0.3.0",
+  "mcpServers": {
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@context7/mcp-server"],
+      "env": {
+        "CONTEXT7_API_KEY": "${CONTEXT7_API_KEY}"
+      },
+      "description": "Large context management, chunking, and semantic search"
+    }
+  },
+  "tools": [
+    {
+      "name": "context_store",
+      "description": "Store content in context memory"
+    },
+    {
+      "name": "context_search",
+      "description": "Semantic search through stored context"
+    },
+    {
+      "name": "context_chunk",
+      "description": "Split large content into manageable chunks"
+    },
+    {
+      "name": "context_summarize",
+      "description": "Summarize stored context"
+    }
+  ],
+  "use_cases": [
+    "Large codebase analysis",
+    "Document search and retrieval",
+    "History and context management",
+    "Multi-file understanding"
+  ],
+  "requirements": {
+    "env": ["CONTEXT7_API_KEY"],
+    "optional": true,
+    "docs": "https://context7.com"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Grimoires Base Settings Template",
+  "version": "0.3.0",
+
+  "permissions": {
+    "allow": [
+      "Bash(npm *)",
+      "Bash(yarn *)",
+      "Bash(pnpm *)",
+      "Bash(bun *)",
+      "Bash(npx *)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git branch*)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git checkout *)",
+      "Bash(git merge *)",
+      "Bash(git stash*)",
+      "Bash(ls *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(grep *)",
+      "Bash(find *)",
+      "Bash(which *)",
+      "Bash(echo *)",
+      "Bash(pwd)",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(mv *)",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Glob(*)",
+      "Grep(*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /)",
+      "Bash(rm -rf ~)",
+      "Bash(rm -rf /*)",
+      "Bash(sudo *)",
+      "Bash(chmod 777 *)",
+      "Bash(curl * | sh)",
+      "Bash(curl * | bash)",
+      "Bash(wget * | sh)",
+      "Bash(wget * | bash)"
+    ]
+  },
+
+  "context": {
+    "includePatterns": [
+      "**/*.ts",
+      "**/*.tsx",
+      "**/*.js",
+      "**/*.jsx",
+      "**/*.json",
+      "**/*.md",
+      "**/*.yaml",
+      "**/*.yml"
+    ],
+    "excludePatterns": [
+      "node_modules/**",
+      "dist/**",
+      "build/**",
+      ".git/**",
+      ".next/**",
+      "coverage/**",
+      "*.lock",
+      "*.log"
+    ]
+  },
+
+  "mcpServers": {}
+}
