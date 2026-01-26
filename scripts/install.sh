@@ -699,6 +699,66 @@ setup_hooks() {
     fi
 }
 
+setup_familiars() {
+    echo ""
+    echo -e "${BLUE}Setting up Familiar CLIs...${NC}"
+
+    # Skip in CI environments
+    if [ -n "${CI:-}" ] || [ -n "${GITHUB_ACTIONS:-}" ]; then
+        info "CI mode: skipping Familiar CLI installation"
+        return
+    fi
+
+    local install_codex=false
+    local install_gemini=false
+
+    # Check Codex
+    if ! command -v codex &> /dev/null; then
+        install_codex=true
+    else
+        success "Codex CLI already installed"
+    fi
+
+    # Check Gemini
+    if ! command -v gemini &> /dev/null; then
+        install_gemini=true
+    else
+        success "Gemini CLI already installed"
+    fi
+
+    # Install missing CLIs
+    if [ "$install_codex" = true ] || [ "$install_gemini" = true ]; then
+        if [ ! -t 0 ]; then
+            # Non-interactive mode: auto-install
+            if [ "$install_codex" = true ]; then
+                info "Installing Codex CLI..."
+                npm install -g @openai/codex 2>/dev/null && success "Codex CLI installed" || warning "Codex CLI installation failed (optional)"
+            fi
+            if [ "$install_gemini" = true ]; then
+                info "Installing Gemini CLI..."
+                npm install -g @google/gemini-cli 2>/dev/null && success "Gemini CLI installed" || warning "Gemini CLI installation failed (optional)"
+            fi
+        else
+            # Interactive mode: ask user
+            echo ""
+            if [ "$install_codex" = true ]; then
+                read -p "Install Codex CLI (uses your OpenAI subscription)? [Y/n] " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+                    npm install -g @openai/codex 2>/dev/null && success "Codex CLI installed" || warning "Codex CLI installation failed"
+                fi
+            fi
+            if [ "$install_gemini" = true ]; then
+                read -p "Install Gemini CLI (uses your Google subscription)? [Y/n] " -n 1 -r
+                echo
+                if [[ $REPLY =~ ^[Yy]$ ]] || [[ -z $REPLY ]]; then
+                    npm install -g @google/gemini-cli 2>/dev/null && success "Gemini CLI installed" || warning "Gemini CLI installation failed"
+                fi
+            fi
+        fi
+    fi
+}
+
 setup_skills() {
     echo ""
     echo -e "${BLUE}Setting up Claude Code skills...${NC}"
@@ -738,6 +798,7 @@ main() {
     copy_scripts
     setup_hooks
     setup_skills
+    setup_familiars
     print_success
 }
 
