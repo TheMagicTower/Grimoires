@@ -103,6 +103,44 @@ gemini
 
 ---
 
+## Sprint Plugin
+
+Grimoires includes a separate **Sprint Plugin** for config-driven multi-squad sprint orchestration.
+
+### Installation
+
+```
+/plugin install sprint@grimoires
+```
+
+Or via script:
+
+```bash
+./scripts/setup-sprint.sh
+```
+
+### Sprint Commands
+
+| Command | Description |
+|---------|-------------|
+| `/sprint:init` | Analyze project and generate `sprint.config.yaml` |
+| `/sprint:plan` | Create sprint plan with issues, squads, dependencies |
+| `/sprint:cycle {N}` | Execute a single sprint (Phase 0-7) |
+| `/sprint:review` | Batch review sprint PRs |
+| `/sprint:all` | Execute all remaining sprints sequentially |
+
+### How It Works
+
+1. Run `/sprint:init` to generate `sprint.config.yaml` from your project structure
+2. Run `/sprint:plan` to define issues, assign squads, and analyze dependencies
+3. Run `/sprint:cycle {N}` to execute the sprint through 8 phases:
+   - Pre-check → Planning → Setup → Execution → CI → Review → Merge → Cleanup
+4. Or run `/sprint:all` to execute all remaining sprints sequentially
+
+The sprint plugin uses worktrees, team agents, and automated CI/review bot monitoring to orchestrate multi-squad development workflows.
+
+---
+
 ## Familiars (AI Agents)
 
 | Familiar | 역할 | MCP | 호출 방식 |
