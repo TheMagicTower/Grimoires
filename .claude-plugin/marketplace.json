@@ -37,6 +37,20 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["sprint", "workflow", "orchestration", "ci-cd", "squads"]
+    },
+    {
+      "name": "maidas-reader",
+      "description": "Browse and read MAiDAS-compatible websites — discover APIs, read schemas, list resources, and fetch documents in Markdown (/maidas)",
+      "source": "./plugin-maidas",
+      "version": "0.1.0",
+      "author": {
+        "name": "TheMagicTower"
+      },
+      "homepage": "https://maidas.dev",
+      "repository": "https://github.com/TheMagicTower/Grimoires",
+      "license": "MIT",
+      "category": "data-access",
+      "keywords": ["maidas", "markdown", "api", "reader", "ai", "data-access"]
     }
   ]
 }
