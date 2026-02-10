@@ -141,6 +141,40 @@ The sprint plugin uses worktrees, team agents, and automated CI/review bot monit
 
 ---
 
+## MAiDAS Reader Plugin
+
+[MAiDAS](https://maidas.dev) (Markdown AI Data Access Standard) 호환 웹사이트를 탐색하는 읽기 전용 플러그인입니다.
+
+### Installation
+
+```
+/plugin install maidas-reader@grimoires
+```
+
+### Usage
+
+```
+/maidas maidas.bot
+```
+
+Entry point를 자동 발견하고 사이트 구조를 보여줍니다:
+
+```
+Site: MAiDAS Demo
+Version: 0.1.0
+
+Pages:
+  - About → /about.md
+
+API Resources:
+  - Articles → /articles/
+    Schema: /articles/_schema.md
+```
+
+이후 schema 조회, 리소스 목록 탐색(페이지네이션/필터링/정렬), 개별 문서 읽기를 대화형으로 진행합니다.
+
+---
+
 ## Familiars (AI Agents)
 
 | Familiar | 역할 | MCP | 호출 방식 |
