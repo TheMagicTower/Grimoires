@@ -3,16 +3,16 @@ name: laravel-cloud-command
 description: Laravel Cloud 원격 명령 실행
 ---
 
-# /cast:laravel-cloud:command Spell
+# /cast:laravel-cloud-command Spell
 
 Laravel Cloud 원격 명령 실행 스펠입니다.
 
 ## Usage
 
 ```
-/cast:laravel-cloud:command run                # 명령 실행
-/cast:laravel-cloud:command list              # 명령 목록
-/cast:laravel-cloud:command get               # 명령 결과 조회
+/cast:laravel-cloud-command run                # 명령 실행
+/cast:laravel-cloud-command list              # 명령 목록
+/cast:laravel-cloud-command get               # 명령 결과 조회
 ```
 
 ## Commands
@@ -44,13 +44,13 @@ cloud command:get
 
 ### 명령 실행
 ```
-> /cast:laravel-cloud:command run
+> /cast:laravel-cloud-command run
 cloud command:run
 ```
 
 ### 명령 결과 조회
 ```
-> /cast:laravel-cloud:command get
+> /cast:laravel-cloud-command get
 cloud command:get
 ```
 
@@ -59,5 +59,5 @@ cloud command:get
 | Spell | Description |
 |-------|-------------|
 | `/cast:laravel-cloud` | 통합 메뉴 |
-| `/cast:laravel-cloud:environment` | 환경 |
-| `/cast:laravel-cloud:deploy` | 배포 |
+| `/cast:laravel-cloud-environment` | 환경 |
+| `/cast:laravel-cloud-deploy` | 배포 |
