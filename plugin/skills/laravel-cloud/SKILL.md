@@ -129,19 +129,19 @@ cloud environment:variables --json --action=set --key=APP_ENV --value=production
 
 ### 배포하기
 ```
-> /laravel-cloud:deploy
+> /cast:laravel-cloud:deploy
 cloud deploy
 ```
 
 ### 데이터베이스 생성
 ```
-> /laravel-cloud:db create
+> /cast:laravel-cloud:db create
 cloud database:create --name=myapp --type=postgres
 ```
 
 ### 환경 변수 설정
 ```
-> /laravel-cloud:environment variables --set --key=APP_ENV --value=production
+> /cast:laravel-cloud:environment variables --set --key=APP_ENV --value=production
 cloud environment:variables --json --action=set --key=APP_ENV --value=production
 ```
 
@@ -149,13 +149,13 @@ cloud environment:variables --json --action=set --key=APP_ENV --value=production
 
 | Spell | Description |
 |-------|-------------|
-| `/laravel-cloud:deploy` | 배포 전용 |
-| `/laravel-cloud:db` | 데이터베이스 전용 |
-| `/laravel-cloud:environment` | 환경 전용 |
-| `/laravel-cloud:instance` | 인스턴스 전용 |
-| `/laravel-cloud:cache` | 캐시 전용 |
-| `/laravel-cloud:bucket` | 스토리지 전용 |
-| `/laravel-cloud:domain` | 도메인 전용 |
-| `/laravel-cloud:websocket` | 웹소켓 전용 |
-| `/laravel-cloud:background` | 백그라운드 전용 |
-| `/laravel-cloud:command` | 명령 실행 전용 |
+| `/cast:laravel-cloud:deploy` | 배포 전용 |
+| `/cast:laravel-cloud:db` | 데이터베이스 전용 |
+| `/cast:laravel-cloud:environment` | 환경 전용 |
+| `/cast:laravel-cloud:instance` | 인스턴스 전용 |
+| `/cast:laravel-cloud:cache` | 캐시 전용 |
+| `/cast:laravel-cloud:bucket` | 스토리지 전용 |
+| `/cast:laravel-cloud:domain` | 도메인 전용 |
+| `/cast:laravel-cloud:websocket` | 웹소켓 전용 |
+| `/cast:laravel-cloud:background` | 백그라운드 전용 |
+| `/cast:laravel-cloud:command` | 명령 실행 전용 |

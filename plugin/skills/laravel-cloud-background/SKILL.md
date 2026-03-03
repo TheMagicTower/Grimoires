@@ -3,16 +3,16 @@ name: laravel-cloud-background
 description: Laravel Cloud 백그라운드 프로세스 관리
 ---
 
-# /laravel-cloud:background Spell
+# /cast:laravel-cloud-background Spell
 
 Laravel Cloud 백그라운드 프로세스 관리 스펠입니다.
 
 ## Usage
 
 ```
-/laravel-cloud:background list            # 백그라운드 프로세스 목록
-/laravel-cloud:background create        # 백그라운드 프로세스 생성
-/laravel-cloud:background delete        # 백그라운드 프로세스 삭제
+/cast:laravel-cloud-background list            # 백그라운드 프로세스 목록
+/cast:laravel-cloud-background create        # 백그라운드 프로세스 생성
+/cast:laravel-cloud-background delete        # 백그라운드 프로세스 삭제
 ```
 
 ## Commands
@@ -38,19 +38,19 @@ cloud background-process:delete
 
 ### 백그라운드 프로세스 목록 조회
 ```
-> /laravel-cloud:background list
+> /cast:laravel-cloud-background list
 cloud background-process:list
 ```
 
 ### 새 백그라운드 프로세스 생성
 ```
-> /laravel-cloud:background create
+> /cast:laravel-cloud-background create
 cloud background-process:create
 ```
 
 ### 백그라운드 프로세스 삭제
 ```
-> /laravel-cloud:background delete
+> /cast:laravel-cloud-background delete
 cloud background-process:delete
 ```
 
@@ -59,5 +59,5 @@ cloud background-process:delete
 | Spell | Description |
 |-------|-------------|
 | `/cast:laravel-cloud` | 통합 메뉴 |
-| `/laravel-cloud:deploy` | 배포 |
-| `/laravel-cloud:command` | 명령 실행 |
+| `/cast:laravel-cloud:deploy` | 배포 |
+| `/cast:laravel-cloud:command` | 명령 실행 |
