@@ -37,13 +37,20 @@ ${CYAN}Project Commands (run in project directory):${NC}
     ${GREEN}init${NC}        Show how to initialize Grimoires for current project
 
 ${CYAN}Note:${NC} Most Grimoires commands are used within Claude Code:
-    /cast-summon    - Initialize project
-    /cast-dev       - Start development workflow
-    /cast-review    - Code review
-    /cast-analyze   - Code analysis
-    /cast-design    - Design workflow
-    /cast-fix       - Fix errors
-    /cast-parallel  - Parallel execution
+    /cast:summon    - Initialize project
+    /cast:dev       - Start development workflow
+    /cast:review    - Code review
+    /cast:analyze   - Code analysis
+    /cast:design    - Design workflow
+    /cast:fix       - Fix errors
+    /cast:parallel  - Parallel execution
+
+${CYAN}Sprint Plugin commands:${NC}
+    /sprint:init    - Generate sprint.config.yaml
+    /sprint:plan    - Create sprint plan
+    /sprint:cycle   - Execute single sprint
+    /sprint:review  - Batch PR review
+    /sprint:all     - Execute all sprints
 
 ${CYAN}Documentation:${NC}
     https://github.com/TheMagicTower/Grimoires

@@ -3,17 +3,17 @@ name: laravel-cloud-deploy
 description: Laravel Cloud 배포 관리 (cloud deploy, cloud ship)
 ---
 
-# /cast:laravel-cloud-deploy Spell
+# /cast:laravel-cloud:deploy Spell
 
 Laravel Cloud 애플리케이션 배포 스펠입니다.
 
 ## Usage
 
 ```
-/cast:laravel-cloud-deploy                    # 배포 실행
-/cast:laravel-cloud-deploy --open             # 배포 후 브라우저 열기
-/cast:laravel-cloud-deploy --monitor          # 배포 모니터링
-/cast:laravel-cloud-deploy ship                       # 앱 생성 + 환경 설정 + 배포
+/cast:laravel-cloud:deploy                    # 배포 실행
+/cast:laravel-cloud:deploy --open             # 배포 후 브라우저 열기
+/cast:laravel-cloud:deploy --monitor          # 배포 모니터링
+/cast:laravel-cloud:ship                       # 앱 생성 + 환경 설정 + 배포
 ```
 
 ## Commands
@@ -58,19 +58,19 @@ cloud ship
 
 ### 일반 배포
 ```
-> /cast:laravel-cloud-deploy
+> /cast:laravel-cloud:deploy
 cloud deploy
 ```
 
 ### 배포 후 브라우저 열기
 ```
-> /cast:laravel-cloud-deploy --open
+> /cast:laravel-cloud:deploy --open
 cloud deploy --open
 ```
 
 ### 전체 배포 워크플로우
 ```
-> /cast:laravel-cloud-deploy ship
+> /cast:laravel-cloud:ship
 cloud ship
 ```
 

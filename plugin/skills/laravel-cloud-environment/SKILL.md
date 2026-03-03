@@ -3,20 +3,20 @@ name: laravel-cloud-environment
 description: Laravel Cloud 환경 관리
 ---
 
-# /cast:laravel-cloud-environment Spell
+# /cast:laravel-cloud:environment Spell
 
 Laravel Cloud 환경 관리 스펠입니다.
 
 ## Usage
 
 ```
-/cast:laravel-cloud-environment list           # 환경 목록
-/cast:laravel-cloud-environment get            # 환경 상세
-/cast:laravel-cloud-environment create        # 환경 생성
-/cast:laravel-cloud-environment update         # 환경 수정
-/cast:laravel-cloud-environment delete        # 환경 삭제
-/cast:laravel-cloud-environment variables     # 환경 변수
-/cast:laravel-cloud-environment logs           # 로그 확인
+/cast:laravel-cloud:environment list           # 환경 목록
+/cast:laravel-cloud:environment get            # 환경 상세
+/cast:laravel-cloud:environment create        # 환경 생성
+/cast:laravel-cloud:environment update         # 환경 수정
+/cast:laravel-cloud:environment delete        # 환경 삭제
+/cast:laravel-cloud:environment variables     # 환경 변수
+/cast:laravel-cloud:environment logs           # 로그 확인
 ```
 
 ## Commands
@@ -72,25 +72,25 @@ cloud environment:logs --follow
 
 ### 환경 목록 조회
 ```
-> /cast:laravel-cloud-environment list
+> /cast:laravel-cloud:environment list
 cloud environment:list
 ```
 
 ### 환경 변수 설정
 ```
-> /cast:laravel-cloud-environment variables --set --key=APP_ENV --value=production
+> /cast:laravel-cloud:environment variables --set --key=APP_ENV --value=production
 cloud environment:variables --json --action=set --key=APP_ENV --value=production
 ```
 
 ### 로그 확인
 ```
-> /cast:laravel-cloud-environment logs
+> /cast:laravel-cloud:environment logs
 cloud environment:logs
 ```
 
 ### 새 환경 생성
 ```
-> /cast:laravel-cloud-environment create --name=staging
+> /cast:laravel-cloud:environment create --name=staging
 cloud environment:create
 ```
 

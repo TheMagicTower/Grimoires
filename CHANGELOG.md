@@ -7,6 +7,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.4.0] - 2026-02-09
+
+### Sprint Plugin Release
+
+A new standalone plugin (`plugin-sprint/`) for config-driven multi-squad sprint orchestration.
+
+### Added
+
+#### Sprint Plugin (`plugin-sprint/`)
+- **plugin manifest** (`.claude-plugin/plugin.json`) — separate from the `cast` plugin
+- **5 commands** (`commands/*.md`):
+  - `/sprint:init` — Analyze project and generate `sprint.config.yaml`
+  - `/sprint:plan` — Create sprint plan with issues, squads, dependencies, edge cases
+  - `/sprint:cycle` — Execute a single sprint through 8 phases (0-7)
+  - `/sprint:review` — Batch review sprint PRs against config-driven checklist
+  - `/sprint:all` — Execute all remaining sprints sequentially
+- **5 skills** (`skills/*/SKILL.md`) with full procedure documentation:
+  - `init/` — Project analysis, squad proposal, config generation
+  - `plan/` — Issue definition, squad assignment, dependency analysis, edge cases
+  - `cycle/` — 8-phase orchestrator with worktrees, teams, agents, CI, review, merge
+  - `review/` — Checklist-driven PR review with classification (Valid Bug / False Positive / Enhancement)
+  - `all/` — Continuous sprint execution with inter-sprint gates
+- **Reference docs** (`skills/cycle/references/`):
+  - `ci-review-procedure.md` — CI monitoring and failure handling
+  - `seer-bot-procedure.md` — Review bot monitoring and comment triage
+- **Setup script** (`scripts/setup-sprint.sh`) — Install/uninstall/list sprint plugin
+- **Config template** (`registry/templates/sprint.config.yaml.template`) — Project init reference
+
+### Changed
+
+- **`.claude-plugin/marketplace.json`** — Added `sprint` plugin entry
+- **`README.md`** — Added Sprint Plugin section with commands and workflow
+- **`CHANGELOG.md`** — This entry
+
+### Sprint Plugin Structure
+
+```
+plugin-sprint/
+├── .claude-plugin/
+│   └── plugin.json
+├── commands/
+│   ├── init.md
+│   ├── plan.md
+│   ├── cycle.md
+│   ├── review.md
+│   └── all.md
+└── skills/
+    ├── init/SKILL.md
+    ├── plan/SKILL.md
+    ├── cycle/
+    │   ├── SKILL.md
+    │   └── references/
+    │       ├── ci-review-procedure.md
+    │       └── seer-bot-procedure.md
+    ├── review/SKILL.md
+    └── all/SKILL.md
+```
+
+---
+
 ## [0.3.0] - 2026-01-26
 
 ### everything-claude-code Integration Release
@@ -372,7 +432,7 @@ First public release of Grimoires - Multi-AI Agent Orchestration for Claude Code
 
 ## [Unreleased]
 
-### Planned for 0.4.0
+### Planned for 0.5.0
 - [ ] Plugin system for custom Familiars
 - [ ] Web dashboard for monitoring
 - [ ] Integration with more AI providers
@@ -390,6 +450,7 @@ First public release of Grimoires - Multi-AI Agent Orchestration for Claude Code
 
 | Version | Date | Highlights |
 |---------|------|------------|
+| 0.4.0 | 2026-02-09 | Sprint plugin — config-driven multi-squad orchestration |
 | 0.3.0 | 2026-01-26 | Hooks system, TDD workflow, extended rules, 6 new spells |
 | 0.2.0 | 2026-01-25 | Cross-platform installation, global deployment, auto-init |
 | 0.1.0 | 2026-01-25 | Initial release with 4 Familiars, 7 spells, 16 design principles |
